@@ -1,14 +1,22 @@
-import os
-from dotenv import load_dotenv
-from mqtt.pub import *
+from flask import Flask, request, render_template
+from mqtt.MQTTsingle import MQTTSingle
+from static.consts import MQTT_TOPIC_CONTROL, MQTT_COMMANDS
 
-load_dotenv(verbose=True, override=True)
-TOPIC = os.getenv("TOPIC")
+app = Flask(__name__)
+mqtt_singleton = MQTTSingle()
 
-mqttc = connect_func()
+@app.route('/')
+def index(errormsg = ""):
+    return render_template('gamestart.html', errormsg=errormsg)
 
-publish_message(mqttc, TOPIC, 123)
-publish_message(mqttc, TOPIC, "abc")
-publish_message(mqttc, TOPIC, "last attempt")
+@app.route('/game/<action>', methods=['POST'])
+def game_action(action):
+    level = request.form.get('level')
+    if level:
+        mqtt_singleton.publish_message(MQTT_TOPIC_CONTROL, MQTT_COMMANDS.START)
+        return render_template('gameprocess.html')
+    else: 
+        return index("field is mandatory")
 
-disconnect_func(mqttc)
+if __name__ == '__main__':
+    app.run()
