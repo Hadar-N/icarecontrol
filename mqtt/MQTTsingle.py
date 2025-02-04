@@ -44,7 +44,7 @@ class MQTTSingle:
 
     def on_publish(self, client, userdata, mid, reason_code, properties):
         try:
-            self.__logger.info('message published status: ', reason_code)
+            self.__logger.info('message published status: '+ str(reason_code))
         except KeyError:
             print(KeyError)
 

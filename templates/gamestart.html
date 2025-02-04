@@ -5,19 +5,20 @@
     </head>
 
     <body>
-        <form action="/game/start" method = "post">
-
-            <label for="level">Choose a level:</label>
+        <form method="POST">
+            {{ form.csrf_token }}
+            <div>
+                {{ form.level.label }}
+                <br />
+                {{ form.level }}
+                <br />
+                {% if form.level.errors %}
+                    {% for error in form.level.errors %}
+                        <span class="errormsg">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
             <br />
-            <select name="level" id="level">
-                <option value="" disabled selected></option>
-                <option value="begginer">begginer</option>
-                <option value="intermediate">intermediate</option>
-                <option value="advanced">advanced</option>
-            </select>
-            <span class="errormsg" {{ '' if errormsg else 'hidden' }}>{{errormsg}}</span>
-
-            <br /><br />
             <button type="submit">start game!</button>
         </form>
     </body>
