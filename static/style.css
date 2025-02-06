@@ -26,3 +26,38 @@ body {
     color: red;
     font-size: 15px;
 }
+
+.centered {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#message-win {
+    display: none;
+
+    position: absolute;
+    min-width: 400px;
+    min-height: 300px;
+    top: calc(49vh - 150px);
+    left: calc(49vw - 200px);
+    margin: 15px;
+
+    border: 2px solid lightgray;
+    border-radius: 5px;
+    background-color: white;
+    color: gray;
+}
+
+#ctrl-buttons {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+}
+
+#ctrl-buttons img {
+    height: 70px;
+    width: 70px;
+    cursor: pointer;
+}

@@ -2,11 +2,62 @@
     <head>
         <title>iCare Control</title>
         <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+
+        <script>
+
+            function clickFunc (elm) {
+                fetch('/publish', { 
+                    method: 'POST', 
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ command: elm.getAttribute("command") })
+                })
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const evtSource = new EventSource("/stream");
+                const messagesWindow = document.getElementById('message-win');
+                const windowContent = document.getElementById('word-content');
+                
+                evtSource.onmessage = function(event) {
+                    const newMessages = JSON.parse(event.data);
+                    newMessages.forEach(message => {
+                        windowContent.textContent = JSON.parse(message).word;
+                        messagesWindow.style.display = "block"
+                        setTimeout(() => {
+                            messagesWindow.style.display = "none"
+                        }, 1500)
+                    });
+                };
+
+                evtSource.onerror = function(err) {
+                    console.error("EventSource failed:", err);
+                };
+            });
+        </script>
+
     </head>
 
     <body>
+
+        <div id="ctrl-buttons">
+            {% for btn in btns %}
+                <button command="{{btn.value}}" onclick="clickFunc(this)">
+                    <img src="static/icons/{{btn.value}}.svg" alt="{{btn.value}}" />
+                </button>
+            {% endfor %}
+        </div>
+        
+
         <div>game running</div>
         <br />
         <div>level: {{level}}</div>
+
+        <br />
+
+        <div id="message-win" class="centered">
+            <h3>Current word:</h3>
+            <p id="word-content"></p>
+        </div>
+
     </body>
 </html>
