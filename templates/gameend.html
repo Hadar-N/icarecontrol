@@ -1,0 +1,26 @@
+<html>
+
+<head>
+    <title>iCare Control</title>
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+
+    <script>
+
+        function clickFunc(elm) {
+            window.location.href = '/'
+        }
+
+    </script>
+</head>
+
+<body>
+    <h2>
+        Congratulations!
+    </h2>
+    <br />
+    <button id="ctrl-buttons" onclick="clickFunc(this)">
+        <img src="static/icons/return.svg" alt="start again" />
+    </button>
+</body>
+
+</html>
