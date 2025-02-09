@@ -1,70 +1,82 @@
 <html>
-    <head>
-        <title>iCare Control</title>
-        <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
 
-        <script>
+<head>
+    <title>iCare Control</title>
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
 
-            function clickFunc (elm) {
-                fetch('/publish', { 
-                    method: 'POST', 
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ command: elm.getAttribute("command") })
-                })
+    <script>
+
+        function clickFunc(elm) {
+            fetch('/publish', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ command: elm.getAttribute("command") })
+            })
                 .then(res => res.json())
                 .then(data => {
                     if (data.redirect) window.location.href = data.redirect;
                 })
-            }
+        }
 
-            document.addEventListener('DOMContentLoaded', function() {
-                const evtSource = new EventSource("/stream");
-                const messagesWindow = document.getElementById('message-win');
-                const windowContent = document.getElementById('word-content');
-                
-                evtSource.onmessage = function(event) {
-                    const newMessages = JSON.parse(event.data);
-                    newMessages.forEach(message => {
-                        windowContent.textContent = JSON.parse(message).word;
-                        messagesWindow.style.display = "block"
-                        setTimeout(() => {
-                            messagesWindow.style.display = "none"
-                        }, 1500)
-                    });
-                };
+        function createListItem(word) {
+            const li = document.createElement('li');
+            li.id = `w-${word}`
+            li.textContent = word;
+            const svg = document.createElement('img');
+            svg.src = "static/icons/speaker.svg";
+            li.appendChild(svg)
+            return li;
+        }
 
-                evtSource.onerror = function(err) {
-                    console.error("EventSource failed:", err);
-                };
-            });
-        </script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const evtSource = new EventSource("/stream");
 
-    </head>
+            const startBtn = document.getElementById('start');
+            startBtn.checked = true;
 
-    <body>        
-        
-        <div class="ctrl-buttons">
-            {% for btn in btns %}
-                <button class="ctrl-singlebutton" command="{{btn.value}}" onclick="clickFunc(this)">
-                    <img src="static/icons/{{btn.value}}.svg" alt="{{btn.value}}" />
-                </button>
-            {% endfor %}
+            const messagesList = document.getElementById('message-list');
+
+            evtSource.onmessage = function (event) {
+                const newMessages = JSON.parse(event.data);
+                newMessages.forEach(message => {
+                    messagesList.prepend(createListItem(JSON.parse(message).word));
+                });
+            };
+
+            evtSource.onerror = function (err) {
+                console.error("EventSource failed:", err);
+            };
+        });
+    </script>
+
+</head>
+
+<body>
+
+    <div class="fulldisplay centered">
+
+        <div class="top-bar centered">
+            <div>game running</div>
+            <div class="level-name">level: {{level}}</div>
         </div>
-        
-        <div class="fulldisplay centered">
 
-        <div>game running</div>
-        <br />
-        <div>level: {{level}}</div>
-
-        <br />
-
-        <div id="message-win" class="centered">
-            <h3>Current word:</h3>
-            <p id="word-content"></p>
+        <div class="listed">
+            <h3 class="list-title">Messages:</h3>
+            <ul id="message-list"></ul>
         </div>
 
     </div>
 
-    </body>
+    <div class="ctrl-buttons">
+        {% for btn in btns %}
+        <input type="radio" name="ctrl-buttons" id="{{btn.value}}" value="{{btn.value}}" />
+        <label for="{{btn.value}}" class="ctrl-singlebutton" command="{{btn.value}}" onclick="clickFunc(this)">
+            <img class="ctrl-img" src="static/icons/{{btn.value}}.svg" alt="{{btn.value}}" />
+        </label>
+        {% endfor %}
+    </div>
+
+
+</body>
+
 </html>

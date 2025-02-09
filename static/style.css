@@ -73,24 +73,49 @@ body {
     color: white;
     border: none;
     border-radius: 15px;
-
-    /* mix-blend-mode: screen; */
+    mix-blend-mode: darken;
 }
 
-#message-win {
-    display: none;
+.top-bar {
+    position: sticky;
+    top: 0;
+    min-height: 30vh;
+    width: 100%;
+    border-bottom: 3px solid rgba(133, 102, 18, 0.8);
+}
+.level-name {
+    font-size: .5em;
+}
 
-    position: absolute;
-    min-width: 400px;
-    min-height: 300px;
-    top: calc(49vh - 150px);
-    left: calc(49vw - 200px);
-    margin: 15px;
+.listed {
+    overflow-y: scroll;
+    width: 100%;
+    display: grid;
+    justify-items: center;
+}
+.list-title {
+    margin-top: 15px;
+}
 
-    border: 2px solid lightgray;
-    border-radius: 5px;
-    background-color: white;
-    color: gray;
+#message-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 70vw;
+}
+#message-list li {
+    border: 1px solid rgb(20,20,20);
+    border-radius: 15px;
+    padding: 3px 20px;
+    margin: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#message-list img {
+    height: 40px;
+    width: 40px;
+    cursor: pointer;
 }
 
 .ctrl-buttons {
@@ -108,4 +133,11 @@ body {
     height: 70px;
     width: 70px;
     cursor: pointer;
+}
+
+.ctrl-buttons input[type="radio"] {
+    display: none;
+}
+.ctrl-buttons input[type="radio"]:checked + .ctrl-singlebutton {
+    opacity: .6;
 }
