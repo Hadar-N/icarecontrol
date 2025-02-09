@@ -1,25 +1,39 @@
 <html>
-    <head>
-        <title>iCare Control</title>
-        <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
-    </head>
 
-    <body>
-        <form method="POST">
-            {{ form.csrf_token }}
-            <div>
-                {{ form.level.label }}
-                <br />
-                {{ form.level }}
-                <br />
-                {% if form.level.errors %}
-                    {% for error in form.level.errors %}
-                        <span class="errormsg">{{ error }}</span>
-                    {% endfor %}
-                {% endif %}
+<head>
+    <title>iCare Control</title>
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+</head>
+
+<body>
+    <form method="POST" class="fulldisplay centered">
+        {{ form.csrf_token }}
+        <div>
+            {{ form.level.label }}
+            <p>
+            <div class="levels">
+                {% for subfield in form.level %}
+                {{ subfield }}
+                <label for="{{subfield.id}}" class="singlelevel">
+                    <img src="{{ url_for('static', filename='icons/' + subfield.label.text.lower() + '.svg') }}"
+                        alt="{{ subfield.label.text }}" />
+                    <br />
+                    <span>{{ subfield.label }}</span>
+                </label>
+                {% endfor %}
             </div>
             <br />
-            <button type="submit">start game!</button>
-        </form>
-    </body>
+
+            {% if form.level.errors %}
+            {% for error in form.level.errors %}
+            <span class="errormsg">{{ error }}</span>
+            {% endfor %}
+            {% endif %}
+
+        </div>
+        <p>
+            <button class="submit" type="submit">Start Game</button>
+    </form>
+</body>
+
 </html>

@@ -6,25 +6,21 @@
 }
 
 body {
+    background-image: url('images/sand_bg.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100% 100%;
+    overflow: hidden;
+  
     padding: 15px;
     text-align: left;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-size: 5vw;
-
-    height: 98vh;
-    width: 98vw;
-    
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    text-align: center;
+    font-size: 5vw;    
 }
 
-.errormsg {
-    color: red;
-    font-size: 15px;
+.fulldisplay {
+    height: 98vh;
+    width: 98vw;
 }
 
 .centered {
@@ -32,6 +28,53 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    text-align: center;
+}
+
+.levels {
+    font-size: 50px;
+    text-transform: capitalize;
+    text-align: center;
+
+    display: flex;
+}
+
+.singlelevel {
+    cursor: pointer;
+    padding: 15px;
+    margin: 10px;
+    border: 3px solid rgba(133, 102, 18, 0.8);
+    border-radius: 5px;
+}
+
+.levels input[type="radio"] {
+    display: none;
+}
+.levels input[type="radio"]:checked + .singlelevel {
+    /* background-color: rgba(160,217,239, .3); */
+    background-color: rgba(187, 146, 32, 0.3);
+}
+.singlelevel img {
+    height: 50px;
+    width: 50px;
+}
+.singlelevel span {
+    cursor: pointer;
+}
+
+.errormsg {
+    color: red;
+    font-size: 15px;
+}
+
+.submit {
+    padding: 7px 50px;
+    background-color: rgb(20,20,20);
+    color: white;
+    border: none;
+    border-radius: 15px;
+
+    /* mix-blend-mode: screen; */
 }
 
 #message-win {
@@ -50,13 +93,18 @@ body {
     color: gray;
 }
 
-#ctrl-buttons {
+.ctrl-buttons {
     position: absolute;
     top: 15px;
     left: 15px;
 }
 
-#ctrl-buttons img {
+.ctrl-singlebutton {
+    background-color: transparent;
+    border: none;
+}
+
+.ctrl-singlebutton img {
     height: 70px;
     width: 70px;
     cursor: pointer;

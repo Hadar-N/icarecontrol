@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import SelectField, ValidationError
+from wtforms import SelectField, RadioField, ValidationError
 
 from static.consts import GAME_LEVELS
 
@@ -8,7 +8,7 @@ def ValidateLevel(form, field):
         raise ValidationError("Please select a game level")
 
 class GameStartForm(FlaskForm):
-    level = SelectField('Choose a level:', 
-        choices=[('','')] + [(level.value, level.name.title()) for level in GAME_LEVELS],
-        validators=[ValidateLevel]
+    level = RadioField('Choose a Level:', 
+        choices=[(level.value, level.value) for level in GAME_LEVELS],
+        validators=[ValidateLevel],
     )

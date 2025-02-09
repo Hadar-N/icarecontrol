@@ -41,16 +41,17 @@
 
     </head>
 
-    <body>
-
-        <div id="ctrl-buttons">
+    <body>        
+        
+        <div class="ctrl-buttons">
             {% for btn in btns %}
-                <button command="{{btn.value}}" onclick="clickFunc(this)">
+                <button class="ctrl-singlebutton" command="{{btn.value}}" onclick="clickFunc(this)">
                     <img src="static/icons/{{btn.value}}.svg" alt="{{btn.value}}" />
                 </button>
             {% endfor %}
         </div>
         
+        <div class="fulldisplay centered">
 
         <div>game running</div>
         <br />
@@ -62,6 +63,8 @@
             <h3>Current word:</h3>
             <p id="word-content"></p>
         </div>
+
+    </div>
 
     </body>
 </html>
