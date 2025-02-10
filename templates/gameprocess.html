@@ -39,8 +39,18 @@
             evtSource.onmessage = function (event) {
                 const newMessages = JSON.parse(event.data);
                 newMessages.forEach(message => {
-                    messagesList.prepend(createListItem(JSON.parse(message).word));
-                });
+                    message_obj = JSON.parse(message);
+                    if (message_obj.status) console.log("STATUS CHANGE!!!", typeof message_obj.status, message_obj.status)
+                    message_obj.new?.forEach(new_msg => {
+                        messagesList.prepend(createListItem(new_msg.en));
+                    });
+                    message_obj.remove?.forEach(rem_msg => {
+                        document.getElementById(`w-${rem_msg.en}`).remove()
+                    })
+                    message_obj.matched?.forEach(mat_msg => {
+                        document.getElementById(`w-${mat_msg.en}`).classList.add("matched")
+                    })
+                })
             };
 
             evtSource.onerror = function (err) {
@@ -53,7 +63,7 @@
 
 <body>
 
-    <div class="fulldisplay centered">
+    <div class="fulldisplay centered center-top">
 
         <div class="top-bar centered">
             <div>game running</div>

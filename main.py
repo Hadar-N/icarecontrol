@@ -36,7 +36,7 @@ def game_process():
     
     session.pop('game_level', None)
     
-    mqtt_singleton.publish_message(MQTT_COMMANDS.START)
+    mqtt_singleton.publish_control_command(MQTT_COMMANDS.START, level)
     return render_template('gameprocess.html', level=level, btns=MQTT_COMMANDS)
 
 @app.route('/gameend', methods=['GET'])
@@ -60,7 +60,7 @@ def stream():
 @app.route('/publish', methods=['POST'])
 def publish():
     command = request.json.get('command')
-    mqtt_singleton.publish_message(command)
+    mqtt_singleton.publish_control_command(command)
     result = {
         'status': 'success',
         'redirect': url_for('game_start') if command == MQTT_COMMANDS.STOP else None
