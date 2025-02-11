@@ -24,3 +24,8 @@ class MQTT_COMMANDS(str, Enum):
     START = "start"
     PAUSE = "pause"
     STOP = "stop"
+
+JS_CONSTANTS = {
+    "MQTT_DATA_ACTIONS": {i.name: i.value for i in MQTT_DATA_ACTIONS},
+    "MQTT_STATUSES": {i.name: i.value for i in MQTT_STATUSES}
+}

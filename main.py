@@ -1,72 +1,14 @@
 import os
-from dotenv import load_dotenv
-from flask import Flask, request, render_template, redirect, url_for, session, Response, stream_with_context
-import time
-import json
+from flask import Flask
 
-from mqtt.MQTTsingle import MQTTSingle
-from static.consts import MQTT_TOPIC_CONTROL, MQTT_COMMANDS, GAME_LEVELS
-from utils.forms import GameStartForm
-
-load_dotenv(verbose=True, override=True)
+from routes.gameroutes import game_routes
+from routes.adminroutes import admin_routes
 
 app = Flask(__name__)
-mqtt_singleton = MQTTSingle()
-
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 
-@app.route('/', methods=['GET', 'POST'])
-def game_start():
-    form = GameStartForm()
-    
-    if form.validate_on_submit():
-        session['game_level'] = form.level.data
-        return redirect(url_for('game_process'))
-    
-    return render_template('gamestart.html', form=form)
-
-@app.route('/gameprocess')
-def game_process():
-    level = session.get('game_level')
-
-    if not level or level not in [l.value for l in GAME_LEVELS]:
-        # TODO: status check
-        print('Invalid game level. Please select a level.')
-        return redirect(url_for('game_start'))
-    
-    session.pop('game_level', None)
-    
-    mqtt_singleton.publish_control_command(MQTT_COMMANDS.START, level)
-    return render_template('gameprocess.html', level=level, btns=MQTT_COMMANDS)
-
-@app.route('/gameend', methods=['GET'])
-def game_end():    
-    return render_template('gameend.html')
-
-@app.route('/stream')
-def stream():
-    def generate():
-        message_count = 0
-        while True:
-            current_messages = mqtt_singleton.get_messages()
-            if len(current_messages) > message_count:
-                new_messages = current_messages[message_count:]
-                message_count = len(current_messages)
-                yield f"data: {json.dumps(new_messages)}\n\n"
-            time.sleep(1)
-
-    return Response(stream_with_context(generate()), mimetype='text/event-stream')
-
-@app.route('/publish', methods=['POST'])
-def publish():
-    command = request.json.get('command')
-    mqtt_singleton.publish_control_command(command)
-    result = {
-        'status': 'success',
-        'redirect': url_for('game_start') if command == MQTT_COMMANDS.STOP else None
-    }
-    # TODO: error handling
-    return json.dumps(result)
+app.register_blueprint(game_routes)
+app.register_blueprint(admin_routes)
 
 if __name__ == '__main__':
     app.run()

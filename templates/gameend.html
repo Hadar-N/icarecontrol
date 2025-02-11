@@ -2,26 +2,44 @@
 
 <head>
     <title>iCare Control</title>
-    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
 
+    <script src="{{ url_for('static', filename='js/gameHelpers.js') }}"></script>
     <script>
 
-        function clickFunc(elm) {
-            window.location.href = '/'
+        function clickReturnFunc(elm) {
+            window.location.href = '/game/'
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            window.APP_CONSTANTS = JSON.parse('{{ constants }}'.replaceAll(/(&#34;)|(&#39;)/g,'"'));
+
+            document.getElementById('end-title').innerHTML = titleBasedOnStatus('{{ status }}')
+        })
+
 
     </script>
 </head>
 
 <body>
     <div class="fulldisplay centered">
-    <h2>
-        Congratulations!
-    </h2>
-    <br />
-    <button class="ctrl-buttons ctrl-singlebutton" onclick="clickFunc(this)">
-        <img src="static/icons/return.svg" alt="start again" />
-    </button>
+
+        <div id="end-title" class="cap-text"></div>
+
+        <br />
+
+        <div class="listed">
+            <span class="list-title">Matched Words:</span>
+            <ul id="message-list">
+                {% for m in matched %}
+                <li id="w-{{m.en}}">{{ m.en }} => {{ m.zh }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <button class="ctrl-buttons ctrl-singlebutton" onclick="clickReturnFunc(this)">
+            <img src="/static/icons/return.svg" alt="start again" />
+        </button>
     </div>
 </body>
 

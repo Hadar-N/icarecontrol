@@ -2,17 +2,20 @@ import os
 import paho.mqtt.client as mqtt
 import logging
 import json
+import threading
 
 from dotenv import load_dotenv
 from static.consts import LOGFILE, MQTT_TOPIC_DATA, MQTT_TOPIC_CONTROL
 
 class MQTTSingle:
     _instance = None
-    
+    _lock = threading.Lock()
+
     def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(MQTTSingle, cls).__new__(cls)
-            cls.__initialized = False
+        with cls._lock:
+            if not cls._instance:
+                cls._instance = super(MQTTSingle, cls).__new__(cls)
+                cls.__initialized = False
         return cls._instance
 
     def __init__(self):

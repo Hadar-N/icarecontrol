@@ -1,0 +1,50 @@
+@import 'vars.css';
+@import 'pages/gamestart.css';
+@import 'pages/gameprocess.css';
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-size: inherit;
+}
+
+body {
+    background-image: url('../images/sand_bg.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100% 100%;
+    overflow: hidden;
+  
+    padding: var(--spacing-unit);
+    text-align: left;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 5vw;    
+}
+
+.fulldisplay {
+    height: 98vh;
+    width: 98vw;
+}
+
+.centered {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.center-top {
+    justify-content: start;
+}
+
+.top-bar {
+    height: 30vh;
+    width: 100%;
+    border-bottom: 3px solid rgba(var(--brown-dark-shade), 0.8);
+}
+
+.cap-text {
+    text-transform: capitalize;
+}

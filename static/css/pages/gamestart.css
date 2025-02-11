@@ -1,0 +1,45 @@
+@import '../vars.css';
+
+.levels {
+    font-size: 50px;
+    text-align: center;
+
+    display: flex;
+}
+
+.singlelevel {
+    cursor: pointer;
+    padding: var(--spacing-unit);
+    margin: 10px;
+    border: 3px solid rgba(var(--brown-dark-shade), 0.8);
+    border-radius: 5px;
+}
+
+.levels input[type="radio"] {
+    display: none;
+}
+.levels input[type="radio"]:checked + .singlelevel {
+    background-color: rgba(var(--brown-light-shade), 0.3);
+}
+.singlelevel img {
+    height: 50px;
+    width: 50px;
+}
+.singlelevel span {
+    cursor: pointer;
+}
+
+.errormsg {
+    color: red;
+    font-size: 15px;
+}
+
+.submit {
+    cursor: pointer;
+    padding: 7px 50px;
+    background-color: rgb(var(--almost-black));
+    color: white;
+    border: none;
+    border-radius: var(--spacing-unit);
+    mix-blend-mode: darken;
+}

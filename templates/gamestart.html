@@ -2,7 +2,7 @@
 
 <head>
     <title>iCare Control</title>
-    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
 </head>
 
 <body>
@@ -11,7 +11,7 @@
         <div>
             {{ form.level.label }}
             <p>
-            <div class="levels">
+            <div class="levels cap-text">
                 {% for subfield in form.level %}
                 {{ subfield }}
                 <label for="{{subfield.id}}" class="singlelevel">

@@ -1,0 +1,65 @@
+.level-name {
+    font-size: .5em;
+}
+
+.listed {
+    overflow-y: scroll;
+    width: 100%;
+    display: grid;
+    justify-items: center;
+}
+.list-title {
+    margin-top: var(--spacing-unit);
+}
+
+#message-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 70vw;
+}
+#message-list li {
+    border: 1px solid rgb(var(--almost-black));
+    border-radius: var(--spacing-unit);
+    padding: 3px 20px;
+    margin: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#message-list .matched {
+    color: rgba(133, 102, 18, 0.6);
+    border: 1px solid rgba(133, 102, 18, 0.5);
+}
+#message-list img {
+    height: 40px;
+    width: 40px;
+    cursor: pointer;
+}
+#message-list .matched img {
+    display: none
+}
+
+.ctrl-buttons {
+    position: absolute;
+    top: var(--spacing-unit);
+    left: var(--spacing-unit);
+}
+
+.ctrl-singlebutton {
+    background-color: transparent;
+    border: none;
+}
+
+.ctrl-singlebutton img {
+    height: 70px;
+    width: 70px;
+    cursor: pointer;
+}
+
+.ctrl-buttons input[type="radio"] {
+    display: none;
+}
+.ctrl-buttons input[type="radio"]:checked + .ctrl-singlebutton {
+    opacity: .6;
+}
