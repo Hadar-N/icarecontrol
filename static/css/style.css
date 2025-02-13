@@ -25,6 +25,7 @@ body {
 .fulldisplay {
     height: 98vh;
     width: 98vw;
+    overflow: hidden;
 }
 
 .centered {
@@ -47,4 +48,8 @@ body {
 
 .cap-text {
     text-transform: capitalize;
+}
+
+.allow-overflow {
+    overflow-y: scroll;
 }

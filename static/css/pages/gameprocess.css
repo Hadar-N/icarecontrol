@@ -37,7 +37,11 @@
     cursor: pointer;
 }
 #message-list .matched img {
-    display: none
+    display: none;
+}
+#message-list .meaning {
+    color: rgb(var(--almost-black), .6);
+    font-size: .5em;
 }
 
 .ctrl-buttons {

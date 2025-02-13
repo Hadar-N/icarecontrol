@@ -42,4 +42,6 @@
     border: none;
     border-radius: var(--spacing-unit);
     mix-blend-mode: darken;
+    text-transform: capitalize;
+    margin: 50px;
 }

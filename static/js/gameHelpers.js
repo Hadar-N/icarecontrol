@@ -10,13 +10,25 @@ function clickControlFunc(elm) {
         })
 }
 
+function speakerOnClick(str) {
+    console.log(`TODO: speak ${str}`)
+}
+
+function createSpeakerButton(str) {
+    const svg = document.createElement('img');
+    svg.src = "/static/icons/speaker.svg";
+    svg.alt = "speaker";
+    svg.onclick = () => speakerOnClick(str)
+    return svg;
+}
+
 function createListItem(str) {
     const li = document.createElement('li');
     li.id = `w-${str}`
-    li.textContent = str;
-    const svg = document.createElement('img');
-    svg.src = "/static/icons/speaker.svg";
-    li.appendChild(svg)
+    const div = document.createElement('div');
+    div.appendChild(createSpeakerButton(str))
+    div.textContent = str;
+    li.appendChild(div)
     return li;
 }
 
