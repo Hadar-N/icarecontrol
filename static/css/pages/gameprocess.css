@@ -35,13 +35,16 @@
     height: 40px;
     width: 40px;
     cursor: pointer;
+    margin-right: 20px;
 }
 #message-list .matched img {
-    display: none;
+    opacity: 0;
+    cursor:default;
 }
 #message-list .meaning {
     color: rgb(var(--almost-black), .6);
     font-size: .5em;
+    font-weight: 700;
 }
 
 .ctrl-buttons {

@@ -5,7 +5,7 @@ import json
 import threading
 
 from dotenv import load_dotenv
-from static.consts import LOGFILE, MQTT_TOPIC_DATA, MQTT_TOPIC_CONTROL
+from static.consts import LOGFILE, MQTT_TOPIC_DATA, MQTT_TOPIC_CONTROL, MQTT_COMMANDS
 
 class MQTTSingle:
     _instance = None
@@ -29,6 +29,7 @@ class MQTTSingle:
         self.__logger.setLevel(logging.DEBUG)
 
         self.__messages = []
+        self.__last_start_index = 0
 
         self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
         self.client.on_connect = self.__on_connect
@@ -65,16 +66,17 @@ class MQTTSingle:
             self.__messages.append(data)
             # TODO: move word/finish distinguishment here?
     
-    def publish_control_command (self, command, level= None):
+    def publish_control_command(self, command, level=None):
         self.__publish_message(MQTT_TOPIC_CONTROL, json.dumps({
             "command": command,
             "level": level
         }))
-        
+        if command == MQTT_COMMANDS.START.value:
+            self.__last_start_index = len(self.__messages)
 
     def __publish_message(self, topic, msg):
         msg_info = self.client.publish(topic, msg)
         msg_info.wait_for_publish()
 
     def get_messages(self):
-        return self.__messages
+        return self.__messages[self.__last_start_index:]

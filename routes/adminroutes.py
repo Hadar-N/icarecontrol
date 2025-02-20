@@ -2,8 +2,8 @@ from flask import request, url_for, Response, stream_with_context, session, Blue
 import time
 import json
 
-from mqtt.MQTTsingle import MQTTSingle
-from static.consts import MQTT_COMMANDS
+from utils.MQTTsingle import MQTTSingle
+from static.consts import MQTT_COMMANDS, COMMAND_TO_STATUS
 
 admin_routes = Blueprint('adm', __name__)
 mqtt_singleton = MQTTSingle()
@@ -28,15 +28,21 @@ def publish():
     mqtt_singleton.publish_control_command(command)
     result = {
         'status': 'success',
-        'redirect': url_for('game.game_start') if command == MQTT_COMMANDS.STOP else None
     }
+    if command == MQTT_COMMANDS.STOP:
+        mlist = request.json.get('matched')
+        save_to_session(COMMAND_TO_STATUS[command].value, mlist)
+        result["redirect"] = url_for('game.game_end')
+    
     # TODO: error handling
     return json.dumps(result)
 
 @admin_routes.route('/savesession', methods=['POST'])
 def save_session():
     data = request.get_json()
-    session['game_status'] = data['status']
-    session['matched_list'] = data['matched']
+    save_to_session(data['status'], data['matched'])
     return json.dumps({"status": "success"})
 
+def save_to_session(status, matched_list):
+    session['game_status'] = status
+    session['matched_list'] = matched_list

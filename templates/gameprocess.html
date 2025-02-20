@@ -5,6 +5,7 @@
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
 
     <script src="{{ url_for('static', filename='js/gameHelpers.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/speechManager.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             window.APP_CONSTANTS = JSON.parse('{{ constants }}'.replaceAll(/(&#34;)|(&#39;)/g,'"'));
@@ -15,6 +16,10 @@
             const messages_list = document.getElementById('message-list');
             const matched_items = [];
             let change_status = false;
+
+            onClickBothParams = (obj) => {
+                clickControlFunc(obj, matched_items)
+            }
 
             evtSource.onmessage = function (event) {
                 const new_messages = JSON.parse(event.data);
@@ -52,7 +57,7 @@
     <div class="ctrl-buttons">
         {% for btn in btns %}
         <input type="radio" name="ctrl-buttons" id="{{btn.value}}" value="{{btn.value}}" />
-        <label for="{{btn.value}}" class="ctrl-singlebutton" command="{{btn.value}}" onclick="clickControlFunc(this)">
+        <label for="{{btn.value}}" class="ctrl-singlebutton" command="{{btn.value}}" onclick="onClickBothParams(this)">
             <img class="ctrl-img" src="/static/icons/{{btn.value}}.svg" alt="{{btn.value}}" />
         </label>
         {% endfor %}

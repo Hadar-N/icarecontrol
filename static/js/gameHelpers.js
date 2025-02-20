@@ -1,8 +1,11 @@
-function clickControlFunc(elm) {
+function clickControlFunc(elm, matched_list) {
     fetch('/publish', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ command: elm.getAttribute("command") })
+        body: JSON.stringify({ 
+            command: elm.getAttribute("command"),
+            matched: matched_list
+        })
     })
         .then(res => res.json())
         .then(data => {
@@ -10,15 +13,12 @@ function clickControlFunc(elm) {
         })
 }
 
-function speakerOnClick(str) {
-    console.log(`TODO: speak ${str}`)
-}
-
 function createSpeakerButton(str) {
     const svg = document.createElement('img');
     svg.src = "/static/icons/speaker.svg";
     svg.alt = "speaker";
-    svg.onclick = () => speakerOnClick(str)
+    svg.id = `sp-${str}`
+    svg.onclick = () => SpeechManager.getInstance().speak(str);
     return svg;
 }
 
@@ -26,9 +26,10 @@ function createListItem(str) {
     const li = document.createElement('li');
     li.id = `w-${str}`
     const div = document.createElement('div');
-    div.appendChild(createSpeakerButton(str))
     div.textContent = str;
-    li.appendChild(div)
+    div.prepend(createSpeakerButton(str))
+    li.appendChild(div);
+    SpeechManager.getInstance().speak(str)
     return li;
 }
 
@@ -52,17 +53,18 @@ function messageEffects(msg_list, list_elm, matched_list) {
                 if (i.word.en && typeof i.word.en === "string") list_elm.prepend(createListItem(i.word.en));
                 break;
             case window.APP_CONSTANTS.MQTT_DATA_ACTIONS.REMOVE:
-                document.getElementById(`w-${i.word.en}`).remove()
+                document.getElementById(`w-${i.word.en}`).remove();
                 break;
             case window.APP_CONSTANTS.MQTT_DATA_ACTIONS.MATCHED:
-                document.getElementById(`w-${i.word.en}`).classList.add("matched")
-                matched_list.push(i.word)
+                document.getElementById(`w-${i.word.en}`).classList.add("matched");
+                document.getElementById(`sp-${i.word.en}`).disabled = true; // TODO: fix
+                matched_list.push(i.word);
                 break;
             case window.APP_CONSTANTS.MQTT_DATA_ACTIONS.STATUS:
                 new_status = i.word;
                 break;
             default:
-                console.error("type non valid!", i)
+                console.error("type non valid!", i);
         }
     }
     return new_status;

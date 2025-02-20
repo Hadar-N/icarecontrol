@@ -5,6 +5,7 @@
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
 
     <script src="{{ url_for('static', filename='js/gameHelpers.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/speechManager.js') }}"></script>
     <script>
 
         function clickReturnFunc(elm) {
@@ -38,10 +39,8 @@
             <ul id="message-list">
                 {% for m in matched %}
                 <li id="w-{{m.en}}">
-                    <div id="en-{{m.en}}">
-                        {{ m.en }}
-                    </div>
-                    <div class="meaning">{{ m.zh }}</div>
+                    <div id="en-{{m.en}}">{{m.en}}</div>
+                    <div class="meaning">{{m.zh}}</div>
                 </li>
                 {% endfor %}
             </ul>
