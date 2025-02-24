@@ -11,4 +11,4 @@ app.register_blueprint(game_routes)
 app.register_blueprint(admin_routes)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=5000)

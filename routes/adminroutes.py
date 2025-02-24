@@ -3,10 +3,12 @@ import time
 import json
 
 from utils.MQTTsingle import MQTTSingle
+from utils.speechSingle import SpeechSingle
 from static.consts import MQTT_COMMANDS, COMMAND_TO_STATUS
 
 admin_routes = Blueprint('adm', __name__)
 mqtt_singleton = MQTTSingle()
+speech_singleton = SpeechSingle()
 
 @admin_routes.route('/stream')
 def stream():
@@ -21,6 +23,16 @@ def stream():
             time.sleep(1)
 
     return Response(stream_with_context(generate()), mimetype='text/event-stream')
+
+@admin_routes.route('/speak', methods=['POST'])
+def speak():
+    word = request.json.get('word')
+    speech_singleton.speak(word)
+    
+    result = {
+        'status': 'success',
+    }
+    return json.dumps(result)
 
 @admin_routes.route('/publish', methods=['POST'])
 def publish():
@@ -41,6 +53,7 @@ def publish():
 def save_session():
     data = request.get_json()
     save_to_session(data['status'], data['matched'])
+    speech_singleton.clear_queue()
     return json.dumps({"status": "success"})
 
 def save_to_session(status, matched_list):

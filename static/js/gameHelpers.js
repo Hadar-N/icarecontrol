@@ -13,12 +13,22 @@ function clickControlFunc(elm, matched_list) {
         })
 }
 
+function speakWord(str) {
+    fetch('/speak', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            word: str
+        })
+    })
+}
+
 function createSpeakerButton(str) {
     const svg = document.createElement('img');
     svg.src = "/static/icons/speaker.svg";
     svg.alt = "speaker";
     svg.id = `sp-${str}`
-    svg.onclick = () => SpeechManager.getInstance().speak(str);
+    svg.onclick = () => speakWord(str);
     return svg;
 }
 
@@ -29,7 +39,7 @@ function createListItem(str) {
     div.textContent = str;
     div.prepend(createSpeakerButton(str))
     li.appendChild(div);
-    SpeechManager.getInstance().speak(str)
+    speakWord(str)
     return li;
 }
 
