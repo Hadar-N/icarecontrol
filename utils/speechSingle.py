@@ -29,16 +29,14 @@ class SpeechSingle:
         self.__initialized = True
 
     def __proccess_queue(self):
-        if not len(self.__queue):
-            self.__is_speaking = False
-            return
-        
         self.__is_speaking = True
-        txt = self.__queue.pop(0)
-        self.__espeak_engine.say(f'{txt} .')
-        self.__espeak_engine.runAndWait()
 
-        self.__proccess_queue()
+        while len(self.__queue):
+            txt = self.__queue.pop(0)
+            self.__espeak_engine.say(f'{txt} .')
+            self.__espeak_engine.runAndWait()
+
+        self.__is_speaking = False
         
     def speak(self,txt):
         if not txt: return
