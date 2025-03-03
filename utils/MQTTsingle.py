@@ -66,10 +66,10 @@ class MQTTSingle:
             self.__messages.append(data)
             # TODO: move word/finish distinguishment here?
     
-    def publish_control_command(self, command, level=None):
+    def publish_control_command(self, command, payload=None):
         self.__publish_message(MQTT_TOPIC_CONTROL, json.dumps({
             "command": command,
-            "level": level
+            "payload": payload
         }))
         if command == MQTT_COMMANDS.START.value:
             self.__last_start_index = len(self.__messages)
