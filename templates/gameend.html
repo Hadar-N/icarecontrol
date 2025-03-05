@@ -16,11 +16,14 @@
 
             document.getElementById('end-title').innerHTML = titleBasedOnStatus('{{ status }}')
 
+            const scrollable_list = document.getElementsByClassName('listed')[0];
+            supportListScrolling(scrollable_list)
+
             const wordItems = document.querySelectorAll('[id^="en-"]');
             wordItems.forEach(item => {
                 const word = item.id.slice(3);
                 item.prepend(createSpeakerButton(word));
-            });
+            });            
         })
 
     </script>

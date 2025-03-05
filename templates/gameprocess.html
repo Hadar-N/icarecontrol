@@ -12,9 +12,12 @@
             document.getElementById('start').checked = true;
             
             const evtSource = new EventSource("/stream");
+            const scrollable_elm = document.getElementsByClassName('listed')[0];
             const messages_list = document.getElementById('message-list');
+
             const matched_items = [];
             let change_status = false;
+            supportListScrolling(scrollable_elm)
 
             onClickBothParams = (obj) => {
                 clickControlFunc(obj, matched_items)

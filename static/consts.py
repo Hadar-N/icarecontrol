@@ -16,7 +16,6 @@ class MQTT_DATA_ACTIONS(str,Enum):
     MATCHED = "matched"
     STATUS = "status"
 class GAME_STATUS(str, Enum):
-    INIT= "init"
     ACTIVE= "active"
     HALTED= "halted"
     DONE= "done"

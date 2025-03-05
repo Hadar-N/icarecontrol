@@ -24,11 +24,11 @@
             </div>
             <br />
 
-            {% if form.level.errors %}
-            {% for error in form.level.errors %}
-            <span class="errormsg">{{ error }}</span>
-            {% endfor %}
-            {% endif %}
+            <div class="errcontainer">
+                {% if form.level.errors %}
+                <span class="errormsg">{{ form.level.errors[-1] }}</span>
+                {% endif %}
+            </div>
 
         </div>
         <button class="submit" type="submit">Start Game</button>

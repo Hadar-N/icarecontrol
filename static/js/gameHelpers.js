@@ -97,3 +97,32 @@ function titleBasedOnStatus(status) {
     }
     return res;
 }
+
+function supportListScrolling(div) {
+    let isDown = false;
+    let startY, scrollTop;
+
+    const mousemovefunc = e => {
+        const y = e.pageY - div.offsetTop;
+        const walk = (y - startY) * 2;
+        div.scrollTop = scrollTop - walk;
+    }
+
+    div.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startY = e.pageY - div.offsetTop;
+        scrollTop = div.scrollTop;
+        div.addEventListener('mousemove', mousemovefunc)
+    });
+
+    div.addEventListener('mouseleave', () => {
+        isDown = false;
+        div.removeEventListener('mousemove', mousemovefunc)
+    });
+
+    div.addEventListener('mouseup', () => {
+        isDown = false;
+        div.removeEventListener('mousemove', mousemovefunc)
+    });
+
+}

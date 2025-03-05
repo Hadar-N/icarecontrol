@@ -12,11 +12,15 @@
     -ms-user-select: none;
 }
 
-body {
+html {
     background-image: url('../images/sand_bg.jpg');
     background-repeat: no-repeat;
     background-attachment: fixed;
-    background-size: 100% 100%;
+    background-size: cover;
+}
+
+body {
+    background: transparent;
     overflow: hidden;
   
     padding: var(--spacing-unit);

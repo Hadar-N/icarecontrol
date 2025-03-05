@@ -4,6 +4,10 @@
 
 .listed {
     overflow-y: scroll;
+    user-select: none;
+    touch-action: pan-y;
+    overscroll-behavior-y: contain;
+
     width: 100%;
     display: grid;
     justify-items: center;
