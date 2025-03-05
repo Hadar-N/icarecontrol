@@ -3,6 +3,7 @@
 
 venv/*
 oldies/*
+tests/*
 
 __pycache__/*
 */__pycache__/*

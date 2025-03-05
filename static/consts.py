@@ -15,23 +15,27 @@ class MQTT_DATA_ACTIONS(str,Enum):
     REMOVE = "remove"
     MATCHED = "matched"
     STATUS = "status"
-class MQTT_STATUSES(str,Enum):
-    ONGOING = "ongoing"
-    FINISHED = "finished"
-    PAUSED = "paused"
-    STOPPED = "stopped"
-    ERROR = "error"
+class GAME_STATUS(str, Enum):
+    INIT= "init"
+    ACTIVE= "active"
+    HALTED= "halted"
+    DONE= "done"
 class MQTT_COMMANDS(str, Enum):
     START = "start"
     PAUSE = "pause"
     STOP = "stop"
+# COMMAND_TO_STATUS= {
+#     MQTT_COMMANDS.START: MQTT_STATUSES.ONGOING,
+#     MQTT_COMMANDS.PAUSE: MQTT_STATUSES.PAUSED,
+#     MQTT_COMMANDS.STOP: MQTT_STATUSES.STOPPED
+# }
 COMMAND_TO_STATUS= {
-    MQTT_COMMANDS.START: MQTT_STATUSES.ONGOING,
-    MQTT_COMMANDS.PAUSE: MQTT_STATUSES.PAUSED,
-    MQTT_COMMANDS.STOP: MQTT_STATUSES.STOPPED
+    MQTT_COMMANDS.START: GAME_STATUS.ACTIVE,
+    MQTT_COMMANDS.PAUSE: GAME_STATUS.HALTED,
+    MQTT_COMMANDS.STOP: GAME_STATUS.HALTED
 }
 
 JS_CONSTANTS = {
     "MQTT_DATA_ACTIONS": {i.name: i.value for i in MQTT_DATA_ACTIONS},
-    "MQTT_STATUSES": {i.name: i.value for i in MQTT_STATUSES}
+    "GAME_STATUS": {i.name: i.value for i in GAME_STATUS}
 }

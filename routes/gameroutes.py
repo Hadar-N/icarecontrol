@@ -2,7 +2,7 @@ import json
 from flask import render_template, redirect, url_for, session, Blueprint
 
 from utils.MQTTsingle import MQTTSingle
-from static.consts import MQTT_COMMANDS, GAME_LEVELS, MQTT_STATUSES, JS_CONSTANTS
+from static.consts import MQTT_COMMANDS, GAME_LEVELS, GAME_STATUS, JS_CONSTANTS
 from utils.forms import GameStartForm
 
 game_routes = Blueprint('game', __name__)
@@ -37,7 +37,7 @@ def game_end():
     status = session.get('game_status')
     matched = session.get('matched_list', [])
 
-    if not status or status not in [l.value for l in MQTT_STATUSES]:
+    if not status or status not in [l.value for l in GAME_STATUS]:
         print('Invalid data. Please start game.')
         return redirect(url_for('game.game_start'))
 

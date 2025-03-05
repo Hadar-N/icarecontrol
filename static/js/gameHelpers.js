@@ -83,17 +83,17 @@ function messageEffects(msg_list, list_elm, matched_list) {
 function titleBasedOnStatus(status) {
     let res = '';
     switch(status) {
-        case window.APP_CONSTANTS.MQTT_STATUSES.FINISHED:
+        case window.APP_CONSTANTS.GAME_STATUS.DONE:
             res = '<b>congratulations!</b><br />game finished!'
             break;
-        case window.APP_CONSTANTS.MQTT_STATUSES.ONGOING:
+        case window.APP_CONSTANTS.GAME_STATUS.ACTIVE:
             break;
-        case window.APP_CONSTANTS.MQTT_STATUSES.STOPPED:
+        case window.APP_CONSTANTS.GAME_STATUS.HALTED:
             res = '<b>Oh no!</b><br />game stopped'
             break;
-        case window.APP_CONSTANTS.MQTT_STATUSES.ERROR:
+        default:
+            console.error('unrecognized game status!', status)
             res = '<b>Game encountered issues...'
-            break;
     }
     return res;
 }
