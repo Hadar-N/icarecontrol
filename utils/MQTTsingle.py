@@ -64,13 +64,15 @@ class MQTTSingle:
         if msg.topic == MQTT_TOPIC_DATA:
             data = msg.payload.decode()
             self.__messages.append(data)
-            # TODO: move word/finish distinguishment here?
+            self.__logger.info('message received: ' + data)
     
     def publish_control_command(self, command, payload=None):
-        self.__publish_message(MQTT_TOPIC_CONTROL, json.dumps({
+        msg = json.dumps({
             "command": command,
             "payload": payload
-        }))
+        })
+        self.__logger.info(f'publishing to topic: {MQTT_TOPIC_CONTROL} the message: {msg}')
+        self.__publish_message(MQTT_TOPIC_CONTROL, msg)
         if command == MQTT_COMMANDS.START.value:
             self.__last_start_index = len(self.__messages)
 
