@@ -9,9 +9,20 @@
     <form method="POST" class="fulldisplay centered">
         {{ form.csrf_token }}
         <div>
+            {{ form.option.label }}
+            <p>
+            <div class="bigradio">
+                {% for subfield in form.option %}
+                {{ subfield }}
+                <label for="{{subfield.id}}" class="singlelevel">
+                    <span>{{ subfield.label }}</span>
+                </label>
+                {% endfor %}
+            </div>
+            
             {{ form.level.label }}
             <p>
-            <div class="levels cap-text">
+            <div class="bigradio cap-text">
                 {% for subfield in form.level %}
                 {{ subfield }}
                 <label for="{{subfield.id}}" class="singlelevel">

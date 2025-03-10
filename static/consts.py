@@ -2,6 +2,9 @@ from enum import Enum
 
 LOGFILE= "running.log"
 
+class GAME_OPTIONS(str, Enum):
+    ENtoZH = '英↓中'
+    ZHtoEN = '中↓英'
 class GAME_LEVELS(str, Enum):
     BEGINNER = "beginner"
     INTERMEDIATE = "intermediate"
