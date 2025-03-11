@@ -1,3 +1,7 @@
+function parseFromFlaskJson(str) {
+    return JSON.parse(str.replaceAll(/(&#34;)|(&#39;)|(&lt;)|(&gt;)/g,'"'));
+}
+
 function clickControlFunc(elm, matched_list) {
     fetch('/publish', {
         method: 'POST',

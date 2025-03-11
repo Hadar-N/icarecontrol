@@ -7,7 +7,7 @@
     <script src="{{ url_for('static', filename='js/gameHelpers.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            window.APP_CONSTANTS = JSON.parse('{{ constants }}'.replaceAll(/(&#34;)|(&#39;)/g,'"'));
+            window.APP_CONSTANTS = parseFromFlaskJson('{{ constants }}')
 
             document.getElementById('start').checked = true;
             
