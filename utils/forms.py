@@ -8,8 +8,7 @@ def ValidateLevel(form, field):
         raise ValidationError("Please select a game level")
 
 def ValidateOption(form, field):
-    print(field.data)
-    if not (field.data and field.data in [l.value for l in GAME_OPTIONS]):
+    if not (field.data and field.data in [l.name for l in GAME_OPTIONS]):
         raise ValidationError("Please select a game option")
 
 class GameStartForm(FlaskForm):

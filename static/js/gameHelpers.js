@@ -130,3 +130,24 @@ function supportListScrolling(div) {
     });
 
 }
+
+changeStageStyle = (elms, field_names, prev_stage_i, curr_stage_i) => {
+    if (prev_stage_i !== curr_stage_i) {
+        for (elm of elms) {
+            if (elm.id === field_names[curr_stage_i]) {
+                elm.style.opacity= 1
+                elm.classList.remove('slide-right', 'slide-left')
+            } else if (elm.id === field_names[prev_stage_i] || !prev_stage_i && field_names.slice(0,curr_stage_i).includes(elm.id)) {
+                elm.classList.add(prev_stage_i < curr_stage_i || !prev_stage_i ? 'slide-left' : 'slide-right')
+            } else if (!prev_stage_i) {
+                elm.style.opacity= 0
+                elm.classList.add('slide-right')
+            }
+        }
+    }
+}
+
+displayIfNotInitial = (elm, stage) => {
+    if (!!stage) elm.style.display = 'block'
+    else elm.style.display = 'none'
+}

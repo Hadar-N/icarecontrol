@@ -6,41 +6,38 @@
     <script src="{{ url_for('static', filename='js/gameHelpers.js') }}"></script>
 
     <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                start_i = '{{ form._fields }}'.search(/[\{\[]/)
-                end_i = [...'{{ form._fields }}'].reverse().join().search(/[\}\]]/)
-                obj = parseFromFlaskJson('{{ form._fields }}'.substring(start_i, '{{ form._fields }}'.length - end_i + 1))
-                
-                fields = Object.keys(obj).filter(i => i !== 'csrf_token')
-                curr_stage = 0;
+        document.addEventListener('DOMContentLoaded', function () {
+            start_i = '{{ form._fields }}'.search(/[\{\[]/)
+            end_i = [...'{{ form._fields }}'].reverse().join().search(/[\}\]]/)
+            obj = parseFromFlaskJson('{{ form._fields }}'.substring(start_i, '{{ form._fields }}'.length - end_i + 1))
 
-                stages = document.getElementsByClassName('formstage')
+            stages = document.getElementsByClassName('formstage')
+            return_btn = document.getElementById('returnbtn')
 
-                changeStage = (e) => {
-                    if (curr_stage+1 < fields.length) curr_stage++
-                    for (st of stages) {
-                        if (st.id === fields[curr_stage]) {
-                            st.classList.remove('slide-right', 'slide-left')
-                            st.style.opacity= 1 
-                        }
-                        else st.classList.add('slide-left')
-                    }
+            fields = Object.keys(obj).filter(i => i !== 'csrf_token')
+            curr_stage = !!'{{stage_1_choice}}' ? 1 : 0;
+
+            changeStage = (e = null) => {
+                let temp = e ? (e.id == "returnbtn" ? curr_stage - 1 : curr_stage + 1) : curr_stage;
+                if (temp >= 0 && temp < fields.length) {
+                    changeStageStyle(stages, fields, e && curr_stage, temp)
+                    displayIfNotInitial(return_btn, temp)
+                    curr_stage = temp
                 }
+            }
+            changeStage()
 
-                for (st of stages) {
-                    if (st.id !== fields[curr_stage]) {
-                        st.classList.add('slide-right')
-                        st.style.opacity= 0
-                    }
-                }
-
-            })
+        })
     </script>
 </head>
 
 <body>
     <form method="POST" class="fulldisplay centered">
         {{ form.csrf_token }}
+        <div id="returnbtn" class="ctrl-buttons ctrl-singlebutton" onclick="changeStage(this)">
+            <img class="ctrl-img" src="/static/icons/return.svg" alt="return" />
+        </div>
+
         <div id="{{form.option.name}}" class="formstage">
             {{ form.option.label }}
             <p>

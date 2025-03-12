@@ -44,18 +44,16 @@
 .formstage {
     display: block;
     position: absolute;
-    transition: transform 3s ease, opacity 0.5s ease;
+    transition: transform 1s ease, opacity 0.5s ease;
     transform: translateX(0);
-    opacity: 1;
+    opacity: 0;
 }
 
 .slide-left {
     transform: translateX(-100vw);
-    opacity: 0;
 }
 .slide-right {
     transform: translateX(100vw);
-    opacity: 0;
 }
 
 .submit {
