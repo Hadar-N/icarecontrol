@@ -1,57 +1,49 @@
-<html>
+{% extends "base.html" %}
+{% block body %}
 
-<head>
-    <title>iCare Control</title>
-    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
+<div class="fulldisplay centered">
 
-    <script src="{{ url_for('static', filename='js/gameHelpers.js') }}"></script>
-    <script>
+    <div id="end-title" class="cap-text"></div>
 
-        function clickReturnFunc(elm) {
-            window.location.href = '/game/'
-        }
+    <br />
 
-        document.addEventListener('DOMContentLoaded', function () {
-            window.APP_CONSTANTS = JSON.parse('{{ constants }}'.replaceAll(/(&#34;)|(&#39;)/g, '"'));
-
-            document.getElementById('end-title').innerHTML = titleBasedOnStatus('{{ status }}')
-
-            const scrollable_list = document.getElementsByClassName('listed')[0];
-            supportListScrolling(scrollable_list)
-
-            const wordItems = document.querySelectorAll('[id^="en-"]');
-            wordItems.forEach(item => {
-                const word = item.id.slice(3);
-                item.prepend(createSpeakerButton(word));
-            });            
-        })
-
-    </script>
-</head>
-
-<body>
-    <div class="fulldisplay centered">
-
-        <div id="end-title" class="cap-text"></div>
-
-        <br />
-
-        <div class="listed">
-            <span class="list-title">Matched Words:</span>
-            <ul id="message-list">
-                {% for m in matched %}
-                <li id="w-{{m.en}}">
-                    <div id="en-{{m.en}}">{{m.en}}</div>
-                    <div class="meaning">{{m.zh}}</div>
-                </li>
-                {% endfor %}
-            </ul>
-            <button onclick="clickReturnFunc(this)" class="submit">
-                <!-- <img src="/static/icons/return.svg" alt="play again" /> -->
-                play again
-            </button>
-        </div>
+    <div class="listed">
+        <span class="list-title">Matched Words:</span>
+        <ul id="message-list">
+            {% for m in matched %}
+            <li id="w-{{m.en}}">
+                <div id="en-{{m.en}}">{{m.en}}</div>
+                <div class="meaning">{{m.zh}}</div>
+            </li>
+            {% endfor %}
+        </ul>
+        <button onclick="clickReturnFunc(this)" class="submit">
+            <!-- <img src="/static/icons/return.svg" alt="play again" /> -->
+            play again
+        </button>
     </div>
-</body>
+</div>
+<script>
 
-</html>
+    function clickReturnFunc(elm) {
+        window.location.href = '/game/'
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        window.APP_CONSTANTS = JSON.parse('{{ constants }}'.replaceAll(/(&#34;)|(&#39;)/g, '"'));
+
+        document.getElementById('end-title').innerHTML = titleBasedOnStatus('{{ status }}')
+
+        const scrollable_list = document.getElementsByClassName('listed')[0];
+        supportListScrolling(scrollable_list)
+
+        const wordItems = document.querySelectorAll('[id^="en-"]');
+        wordItems.forEach(item => {
+            const word = item.id.slice(3);
+            item.prepend(createSpeakerButton(word));
+        });
+    })
+
+</script>
+
+{% endblock %}
