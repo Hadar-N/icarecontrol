@@ -1,38 +1,73 @@
-<html>
+{% extends "base.html" %}
+{% block body %}
 
-<head>
-    <title>iCare Control</title>
-    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
-</head>
+<form method="POST" class="fulldisplay centered">
+    {{ form.csrf_token }}
+    <div id="returnbtn" class="ctrl-buttons ctrl-singlebutton" onclick="changeStage(this)">
+        <img class="ctrl-img" src="/static/icons/return.svg" alt="return" />
+    </div>
 
-<body>
-    <form method="POST" class="fulldisplay centered">
-        {{ form.csrf_token }}
-        <div>
-            {{ form.level.label }}
-            <p>
-            <div class="levels cap-text">
-                {% for subfield in form.level %}
-                {{ subfield }}
-                <label for="{{subfield.id}}" class="singlelevel">
-                    <img src="{{ url_for('static', filename='icons/' + subfield.label.text.lower() + '.svg') }}"
-                        alt="{{ subfield.label.text }}" />
-                    <br />
-                    <span>{{ subfield.label }}</span>
-                </label>
-                {% endfor %}
-            </div>
-            <br />
-
-            <div class="errcontainer">
-                {% if form.level.errors %}
-                <span class="errormsg">{{ form.level.errors[-1] }}</span>
-                {% endif %}
-            </div>
-
+    <div id="{{form.option.name}}" class="formstage">
+        {{ form.option.label }}
+        <p>
+        <div class="bigradio">
+            {% for subfield in form.option %}
+            {{ subfield }}
+            <label for="{{subfield.id}}" class="singleradioitem" onclick="changeStage(this)">
+                <span class="charperline">{{ subfield.label }}</span>
+            </label>
+            {% endfor %}
         </div>
-        <button class="submit" type="submit">Start Game</button>
-    </form>
-</body>
+    </div>
 
-</html>
+    <div id="{{form.level.name}}" class="formstage">
+        {{ form.level.label }}
+        <p>
+        <div class="bigradio cap-text">
+            {% for subfield in form.level %}
+            {{ subfield }}
+            <label for="{{subfield.id}}" class="singleradioitem">
+                <img src="{{ url_for('static', filename='icons/' + subfield.label.text.lower() + '.svg') }}"
+                    alt="{{ subfield.label.text }}" />
+                <br />
+                <span>{{ subfield.label }}</span>
+            </label>
+            {% endfor %}
+        </div>
+        <br />
+
+        <div class="errcontainer">
+            {% if form.level.errors %}
+            <span class="errormsg">{{ form.level.errors[-1] }}</span>
+            {% endif %}
+        </div>
+
+        <button class="submit" type="submit">Start Game</button>
+    </div>
+</form>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        start_i = '{{ form._fields }}'.search(/[\{\[]/)
+        end_i = [...'{{ form._fields }}'].reverse().join().search(/[\}\]]/)
+        obj = parseFromFlaskJson('{{ form._fields }}'.substring(start_i, '{{ form._fields }}'.length - end_i + 1))
+
+        stages = document.getElementsByClassName('formstage')
+        return_btn = document.getElementById('returnbtn')
+
+        fields = Object.keys(obj).filter(i => i !== 'csrf_token')
+        curr_stage = !!'{{stage_1_choice}}' ? 1 : 0;
+
+        changeStage = (e = null) => {
+            let temp = e ? (e.id == "returnbtn" ? curr_stage - 1 : curr_stage + 1) : curr_stage;
+            if (temp >= 0 && temp < fields.length) {
+                changeStageStyle(stages, fields, e && curr_stage, temp)
+                displayIfNotInitial(return_btn, temp)
+                curr_stage = temp
+            }
+        }
+        changeStage()
+
+    })
+</script>
+
+{% endblock %}

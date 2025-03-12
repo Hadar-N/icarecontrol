@@ -1,13 +1,17 @@
 @import '../vars.css';
 
-.levels {
+.bigradio {
     display: flex;
     justify-content: center;
     font-size: 50px;
     text-align: center;
 }
 
-.singlelevel {
+.charperline {
+    display: table-caption;
+}
+
+.singleradioitem {
     cursor: pointer;
     padding: var(--spacing-unit);
     margin: 10px;
@@ -15,17 +19,17 @@
     border-radius: 5px;
 }
 
-.levels input[type="radio"] {
+.bigradio input[type="radio"] {
     display: none;
 }
-.levels input[type="radio"]:checked + .singlelevel {
+.bigradio input[type="radio"]:checked + .singleradioitem {
     background-color: rgba(var(--brown-light-shade), 0.3);
 }
-.singlelevel img {
+.singleradioitem img {
     height: 50px;
     width: 50px;
 }
-.singlelevel span {
+.singleradioitem span {
     cursor: pointer;
 }
 
@@ -35,6 +39,21 @@
 .errormsg {
     color: red;
     font-size: .7em;
+}
+
+.formstage {
+    display: block;
+    position: absolute;
+    transition: transform 1s ease, opacity 0.5s ease;
+    transform: translateX(0);
+    opacity: 0;
+}
+
+.slide-left {
+    transform: translateX(-100vw);
+}
+.slide-right {
+    transform: translateX(100vw);
 }
 
 .submit {

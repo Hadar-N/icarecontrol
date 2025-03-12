@@ -1,71 +1,61 @@
-<html>
+{% extends "base.html" %}
+{% block body %}
 
-<head>
-    <title>iCare Control</title>
-    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
 
-    <script src="{{ url_for('static', filename='js/gameHelpers.js') }}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            window.APP_CONSTANTS = JSON.parse('{{ constants }}'.replaceAll(/(&#34;)|(&#39;)/g,'"'));
+<div class="fulldisplay centered center-top">
 
-            document.getElementById('start').checked = true;
-            
-            const evtSource = new EventSource("/stream");
-            const scrollable_elm = document.getElementsByClassName('listed')[0];
-            const messages_list = document.getElementById('message-list');
-
-            const matched_items = [];
-            let change_status = false;
-            supportListScrolling(scrollable_elm)
-
-            onClickBothParams = (obj) => {
-                clickControlFunc(obj, matched_items)
-            }
-
-            evtSource.onmessage = function (event) {
-                const new_messages = JSON.parse(event.data);
-                new_messages.forEach(message => {
-                    message_obj = JSON.parse(message);
-                    change_status = messageEffects(message_obj, messages_list, matched_items)
-                })
-                if (change_status) finishGame(change_status, matched_items)
-            };
-
-            evtSource.onerror = function (err) {
-                console.error("EventSource failed:", err);
-            };
-        });
-    </script>
-
-</head>
-
-<body>
-
-    <div class="fulldisplay centered center-top">
-
-        <div class="top-bar centered">
-            <div>game running</div>
-            <div class="level-name">level: {{level}}</div>
-        </div>
-
-        <div class="listed">
-            <h3 class="list-title">Messages:</h3>
-            <ul id="message-list"></ul>
-        </div>
-
+    <div class="top-bar centered">
+        <div>game running</div>
+        <div class="level-name">level: {{level}}</div>
     </div>
 
-    <div class="ctrl-buttons">
-        {% for btn in btns %}
-        <input type="radio" name="ctrl-buttons" id="{{btn.value}}" value="{{btn.value}}" />
-        <label for="{{btn.value}}" class="ctrl-singlebutton" command="{{btn.value}}" onclick="onClickBothParams(this)">
-            <img class="ctrl-img" src="/static/icons/{{btn.value}}.svg" alt="{{btn.value}}" />
-        </label>
-        {% endfor %}
+    <div class="listed">
+        <h3 class="list-title">Messages:</h3>
+        <ul id="message-list"></ul>
     </div>
 
+</div>
 
-</body>
+<div class="ctrl-buttons">
+    {% for btn in btns %}
+    <input type="radio" name="ctrl-buttons" id="{{btn.value}}" value="{{btn.value}}" />
+    <label for="{{btn.value}}" class="ctrl-singlebutton" command="{{btn.value}}" onclick="onClickBothParams(this)">
+        <img class="ctrl-img" src="/static/icons/{{btn.value}}.svg" alt="{{btn.value}}" />
+    </label>
+    {% endfor %}
+</div>
 
-</html>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        window.APP_CONSTANTS = parseFromFlaskJson('{{ constants }}')
+
+        document.getElementById('start').checked = true;
+
+        const evtSource = new EventSource("/stream");
+        const scrollable_elm = document.getElementsByClassName('listed')[0];
+        const messages_list = document.getElementById('message-list');
+
+        const matched_items = [];
+        let change_status = false;
+        supportListScrolling(scrollable_elm)
+
+        onClickBothParams = (obj) => {
+            clickControlFunc(obj, matched_items)
+        }
+
+        evtSource.onmessage = function (event) {
+            const new_messages = JSON.parse(event.data);
+            new_messages.forEach(message => {
+                message_obj = JSON.parse(message);
+                change_status = messageEffects(message_obj, messages_list, matched_items)
+            })
+            if (change_status) finishGame(change_status, matched_items)
+        };
+
+        evtSource.onerror = function (err) {
+            console.error("EventSource failed:", err);
+        };
+    });
+</script>
+
+{% endblock %}
