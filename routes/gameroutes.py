@@ -25,7 +25,7 @@ def game_process():
     level = session.get('game_level')
     option = session.get('game_option')
 
-    if (not level or level not in [l.value for l in GAME_LEVELS]) or (not option or option not in [l.name for l in GAME_OPTIONS]):
+    if (not level or level not in [l.name for l in GAME_LEVELS]) or (not option or option not in [l.name for l in GAME_OPTIONS]):
         # TODO: status check
         print('Invalid game properties. Please select option and level.')
         return redirect(url_for('game.game_start'))

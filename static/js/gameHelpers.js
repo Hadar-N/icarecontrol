@@ -2,6 +2,10 @@ function parseFromFlaskJson(str) {
     return JSON.parse(str.replaceAll(/(&#34;)|(&#39;)|(&lt;)|(&gt;)/g,'"'));
 }
 
+function isEnglish(str) {
+    return(str && !!str.match(/^[A-Za-z]/))
+}
+
 function clickControlFunc(elm, matched_list) {
     fetch('/publish', {
         method: 'POST',
@@ -38,12 +42,13 @@ function createSpeakerButton(str) {
 
 function createListItem(str) {
     const li = document.createElement('li');
-    li.id = `w-${str}`
+    li.id = `l-${str}`
+    const is_english = isEnglish(str)
     const div = document.createElement('div');
     div.textContent = str;
-    div.prepend(createSpeakerButton(str))
+    is_english && div.prepend(createSpeakerButton(str))
     li.appendChild(div);
-    speakWord(str)
+    is_english && speakWord(str)
     return li;
 }
 
@@ -64,14 +69,14 @@ function messageEffects(msg_list, list_elm, matched_list) {
         console.log("messageEffects", i)
         switch (i.type) {
             case window.APP_CONSTANTS.MQTT_DATA_ACTIONS.NEW:
-                if (i.word.en && typeof i.word.en === "string") list_elm.prepend(createListItem(i.word.en));
+                if (i.word.word && typeof i.word.word === "string") list_elm.prepend(createListItem(i.word.word));
                 break;
             case window.APP_CONSTANTS.MQTT_DATA_ACTIONS.REMOVE:
-                document.getElementById(`w-${i.word.en}`).remove();
+                document.getElementById(`l-${i.word.word}`).remove();
                 break;
             case window.APP_CONSTANTS.MQTT_DATA_ACTIONS.MATCHED:
-                document.getElementById(`w-${i.word.en}`).classList.add("matched");
-                document.getElementById(`sp-${i.word.en}`).disabled = true; // TODO: fix
+                document.getElementById(`l-${i.word.word}`).classList.add("matched");
+                if(isEnglish(i.word.word)) document.getElementById(`sp-${i.word.word}`).disabled = true; // TODO: fix
                 matched_list.push(i.word);
                 break;
             case window.APP_CONSTANTS.MQTT_DATA_ACTIONS.STATUS:

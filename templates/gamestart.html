@@ -27,10 +27,10 @@
             {% for subfield in form.level %}
             {{ subfield }}
             <label for="{{subfield.id}}" class="singleradioitem">
-                <img src="{{ url_for('static', filename='icons/' + subfield.label.text.lower() + '.svg') }}"
+                <img src="{{ url_for('static', filename='icons/' + subfield.data + '.svg') }}"
                     alt="{{ subfield.label.text }}" />
                 <br />
-                <span>{{ subfield.label }}</span>
+                <span>{{ subfield.label.text }}</span>
             </label>
             {% endfor %}
         </div>
