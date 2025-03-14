@@ -46,8 +46,7 @@
         evtSource.onmessage = function (event) {
             const new_messages = JSON.parse(event.data);
             new_messages.forEach(message => {
-                message_obj = JSON.parse(message);
-                change_status = messageEffects(message_obj, messages_list, matched_items)
+                change_status = messageEffects(message, messages_list, matched_items)
             })
             if (change_status) finishGame(change_status, matched_items)
         };

@@ -1,4 +1,5 @@
 from enum import Enum
+from game_shared import GAME_STATUS, MQTT_COMMANDS
 
 LOGFILE= "running.log"
 
@@ -18,14 +19,14 @@ class MQTT_DATA_ACTIONS(str,Enum):
     REMOVE = "remove"
     MATCHED = "matched"
     STATUS = "status"
-class GAME_STATUS(str, Enum):
-    ACTIVE= "active"
-    HALTED= "halted"
-    DONE= "done"
-class MQTT_COMMANDS(str, Enum):
-    START = "start"
-    PAUSE = "pause"
-    STOP = "stop"
+# class GAME_STATUS(str, Enum):
+#     ACTIVE= "active"
+#     HALTED= "halted"
+#     DONE= "done"
+# class MQTT_COMMANDS(str, Enum):
+#     START = "start"
+#     PAUSE = "pause"
+#     STOP = "stop"
 # COMMAND_TO_STATUS= {
 #     MQTT_COMMANDS.START: MQTT_STATUSES.ONGOING,
 #     MQTT_COMMANDS.PAUSE: MQTT_STATUSES.PAUSED,

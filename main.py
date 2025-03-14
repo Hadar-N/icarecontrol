@@ -1,11 +1,30 @@
 import os
 from flask import Flask
 import atexit
+import logging
+from dotenv import load_dotenv
+
+from mqtt_shared import MQTTInitialData, ConnectionManager
+from game_shared import DEVICE_TYPE
+from utils.browserHelper import open_browser, close_browser
+from static.consts import LOGFILE
 
 from routes.gameroutes import game_routes
 from routes.adminroutes import admin_routes
 
-from utils.browserHelper import open_browser, close_browser
+logging.basicConfig(filename=LOGFILE)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+load_dotenv(verbose=True, override=True)
+
+init_data = MQTTInitialData(
+    host = os.getenv("HOST"),
+    port = os.getenv("PORT"),
+    username = os.getenv("USERNAME"),
+    password = os.getenv("PASSWORD")
+)
+
+conn_manager = ConnectionManager.initialize(init_data, DEVICE_TYPE.CONTROL, logger)
 
 def create_app():
     app = Flask(__name__)
