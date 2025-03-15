@@ -65,21 +65,21 @@ function finishGame(new_stat, matched_list) {
 
 function messageEffects(msg_list, list_elm, matched_list) {
     let new_status = false;
+    const actions = GameState.getConsts().MQTT_DATA_ACTIONS
     for (let i of msg_list) {
-        console.log("messageEffects", i)
         switch (i.type) {
-            case window.APP_CONSTANTS.MQTT_DATA_ACTIONS.NEW:
+            case actions.NEW:
                 if (i.word.word && typeof i.word.word === "string") list_elm.prepend(createListItem(i.word.word));
                 break;
-            case window.APP_CONSTANTS.MQTT_DATA_ACTIONS.REMOVE:
+            case actions.REMOVE:
                 document.getElementById(`l-${i.word.word}`).remove();
                 break;
-            case window.APP_CONSTANTS.MQTT_DATA_ACTIONS.MATCHED:
+            case actions.MATCHED:
                 document.getElementById(`l-${i.word.word}`).classList.add("matched");
                 if(isEnglish(i.word.word)) document.getElementById(`sp-${i.word.word}`).disabled = true; // TODO: fix
                 matched_list.push(i.word);
                 break;
-            case window.APP_CONSTANTS.MQTT_DATA_ACTIONS.STATUS:
+            case actions.STATUS:
                 new_status = i.word;
                 break;
             default:
@@ -91,13 +91,14 @@ function messageEffects(msg_list, list_elm, matched_list) {
 
 function titleBasedOnStatus(status) {
     let res = '';
+    const statuses = GameState.getConsts().GAME_STATUS
     switch(status) {
-        case window.APP_CONSTANTS.GAME_STATUS.DONE:
+        case statuses.DONE:
             res = '<b>congratulations!</b><br />game finished!'
             break;
-        case window.APP_CONSTANTS.GAME_STATUS.ACTIVE:
+        case statuses.ACTIVE:
             break;
-        case window.APP_CONSTANTS.GAME_STATUS.HALTED:
+        case statuses.HALTED:
             res = '<b>Oh no!</b><br />game stopped'
             break;
         default:

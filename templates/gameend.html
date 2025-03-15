@@ -30,8 +30,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        window.APP_CONSTANTS = parseFromFlaskJson('{{ constants }}')
-
         document.getElementById('end-title').innerHTML = titleBasedOnStatus('{{ status }}')
 
         const scrollable_list = document.getElementsByClassName('listed')[0];

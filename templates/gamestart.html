@@ -7,11 +7,11 @@
         <img class="ctrl-img" src="/static/icons/return.svg" alt="return" />
     </div>
 
-    <div id="{{form.option.name}}" class="formstage">
-        {{ form.option.label }}
+    <div id="{{form.mode.name}}" class="formstage">
+        {{ form.mode.label }}
         <p>
         <div class="bigradio">
-            {% for subfield in form.option %}
+            {% for subfield in form.mode %}
             {{ subfield }}
             <label for="{{subfield.id}}" class="singleradioitem" onclick="changeStage(this)">
                 <span class="charperline">{{ subfield.label }}</span>

@@ -27,8 +27,6 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        window.APP_CONSTANTS = parseFromFlaskJson('{{ constants }}')
-
         document.getElementById('start').checked = true;
 
         const evtSource = new EventSource("/stream");
