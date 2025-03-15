@@ -16,13 +16,13 @@
     margin-top: var(--spacing-unit);
 }
 
-#message-list {
+.message-list {
     list-style-type: none;
     margin: 0;
     padding: 0;
     width: 70vw;
 }
-#message-list li {
+.message-list li {
     border: 1px solid rgb(var(--almost-black));
     border-radius: var(--spacing-unit);
     padding: 3px 20px;
@@ -31,21 +31,40 @@
     justify-content: space-between;
     align-items: center;
 }
-#message-list .matched {
-    color: rgba(133, 102, 18, 0.6);
-    border: 1px solid rgba(133, 102, 18, 0.5);
+.message-list .matched {
+    color: rgba(var(--brown-dark-shade), 0.6);
+    border: 1px sol id rgba(var(--brown-dark-shade), 0.5);
 }
-#message-list img {
+
+.message-list .main-part{
+    display: flex;
+    align-items: baseline;
+}
+.message-list .choose-option-btn {
+    font-size: .35em;
+    font-weight: 200;
+    color:rgba(var(--brown-dark-shade), 1);
+    background-color: bisque;
+    border: 1.5px solid;
+    border-radius: 15px;
+    margin-left: 15px;
+    padding: 0 10px;
+    cursor: pointer;
+}
+.message-list .matched .choose-option-btn{
+    display: none;
+}
+.message-list img {
     height: 40px;
     width: 40px;
     cursor: pointer;
     margin: 0 20px;
 }
-#message-list .matched img {
+.message-list .matched img {
     opacity: 0;
     cursor:default;
 }
-#message-list .meaning {
+.message-list .meaning {
     color: rgb(var(--almost-black), .6);
     font-size: .5em;
     font-weight: 700;

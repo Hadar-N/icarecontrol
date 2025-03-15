@@ -36,8 +36,8 @@ def speak():
     }
     return json.dumps(result)
 
-@admin_routes.route('/publish', methods=['POST'])
-def publish():
+@admin_routes.route('/publish_command', methods=['POST'])
+def publish_command():
     command = request.json.get('command')
     conn_manager.publish_message(Topics.CONTROL, BodyForTopic(Topics.CONTROL, {"command": command}))
     result = {
@@ -50,6 +50,20 @@ def publish():
     
     # TODO: error handling
     return json.dumps(result)
+
+@admin_routes.route('/publish_select', methods=['POST'])
+def publish_select():
+    word = request.json.get('word')
+    selected = request.json.get('selected')
+
+    conn_manager.publish_message(Topics.word_select(word), BodyForTopic(Topics.word_select(word),
+                                                                        {"word": word, "selected": selected}))
+    result = {
+        'status': 'success',
+    } # TODO: return real result
+
+    return result
+
 
 @admin_routes.route('/getconstants', methods=['GET'])
 def get_consts():

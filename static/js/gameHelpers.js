@@ -1,16 +1,16 @@
 function parseFromFlaskJson(str) {
-    return JSON.parse(str.replaceAll(/(&#34;)|(&#39;)|(&lt;)|(&gt;)/g,'"'));
+    return JSON.parse(str.replaceAll(/(&#34;)|(&#39;)|(&lt;)|(&gt;)/g, '"'));
 }
 
 function isEnglish(str) {
-    return(str && !!str.match(/^[A-Za-z]/))
+    return (str && !!str.match(/^[A-Za-z]/))
 }
 
 function clickControlFunc(elm, matched_list) {
-    fetch('/publish', {
+    fetch('/publish_command', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
             command: elm.getAttribute("command"),
             matched: matched_list
         })
@@ -25,7 +25,7 @@ function speakWord(str) {
     fetch('/speak', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
             word: str
         })
     })
@@ -40,15 +40,30 @@ function createSpeakerButton(str) {
     return svg;
 }
 
-function createListItem(str) {
+function createChooseOptionBtn(str) {
+    const div = document.createElement('div');
+    div.id = `optionbtn-${str}`
+    div.textContent = "choose option"
+    div.classList.add('choose-option-btn')
+    div.onclick = () => GameState.changeToggle(str)
+    return div
+}
+
+function createListItem(str, options = []) {
     const li = document.createElement('li');
     li.id = `l-${str}`
     const is_english = isEnglish(str)
     const div = document.createElement('div');
+    div.classList.add('main-part')
     div.textContent = str;
-    is_english && div.prepend(createSpeakerButton(str))
+    if (is_english) {
+        div.prepend(createSpeakerButton(str))
+        speakWord(str)
+    }
+    if (options.length) {
+        div.append(createChooseOptionBtn(str))
+    }
     li.appendChild(div);
-    is_english && speakWord(str)
     return li;
 }
 
@@ -69,14 +84,15 @@ function messageEffects(msg_list, list_elm, matched_list) {
     for (let i of msg_list) {
         switch (i.type) {
             case actions.NEW:
-                if (i.word.word && typeof i.word.word === "string") list_elm.prepend(createListItem(i.word.word));
+                GameState.addWord(i.word)
+                if (i.word.word && typeof i.word.word === "string") list_elm.prepend(createListItem(i.word.word, i.word.options));
                 break;
             case actions.REMOVE:
                 document.getElementById(`l-${i.word.word}`).remove();
                 break;
             case actions.MATCHED:
                 document.getElementById(`l-${i.word.word}`).classList.add("matched");
-                if(isEnglish(i.word.word)) document.getElementById(`sp-${i.word.word}`).disabled = true; // TODO: fix
+                if (isEnglish(i.word.word)) document.getElementById(`sp-${i.word.word}`).disabled = true; // TODO: fix
                 matched_list.push(i.word);
                 break;
             case actions.STATUS:
@@ -92,7 +108,7 @@ function messageEffects(msg_list, list_elm, matched_list) {
 function titleBasedOnStatus(status) {
     let res = '';
     const statuses = GameState.getConsts().GAME_STATUS
-    switch(status) {
+    switch (status) {
         case statuses.DONE:
             res = '<b>congratulations!</b><br />game finished!'
             break;
@@ -141,12 +157,12 @@ changeStageStyle = (elms, field_names, prev_stage_i, curr_stage_i) => {
     if (prev_stage_i !== curr_stage_i) {
         for (elm of elms) {
             if (elm.id === field_names[curr_stage_i]) {
-                elm.style.opacity= 1
+                elm.style.opacity = 1
                 elm.classList.remove('slide-right', 'slide-left')
-            } else if (elm.id === field_names[prev_stage_i] || !prev_stage_i && field_names.slice(0,curr_stage_i).includes(elm.id)) {
+            } else if (elm.id === field_names[prev_stage_i] || !prev_stage_i && field_names.slice(0, curr_stage_i).includes(elm.id)) {
                 elm.classList.add(prev_stage_i < curr_stage_i || !prev_stage_i ? 'slide-left' : 'slide-right')
             } else if (!prev_stage_i) {
-                elm.style.opacity= 0
+                elm.style.opacity = 0
                 elm.classList.add('slide-right')
             }
         }

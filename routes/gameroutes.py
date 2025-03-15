@@ -23,8 +23,8 @@ def game_start():
 
 @game_routes.route('/game/process')
 def game_process():
-    level = session.get('game_level')
-    mode = session.get('game_mode')
+    level = session.get('game_level', GAME_LEVELS.BEGINNER.name)
+    mode = session.get('game_mode', GAME_MODES.ENtoZH.name)
 
     if (not level or level not in [l.name for l in GAME_LEVELS]) or (not mode or mode not in [l.name for l in GAME_MODES]):
         # TODO: status check

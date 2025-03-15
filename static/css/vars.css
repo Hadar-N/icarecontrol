@@ -3,4 +3,6 @@
     --brown-light-shade: 187, 146, 32;
     --almost-black: 20, 20, 20;
     --spacing-unit: 15px;
+    --max-height: 98vh;
+    --max-width: 98vw;
 }
