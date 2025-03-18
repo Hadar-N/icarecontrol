@@ -2,11 +2,14 @@ import os
 from flask import Flask
 import atexit
 import logging
+from uuid import uuid4
 from dotenv import load_dotenv
+from flask_socketio import SocketIO, emit
 
-from mqtt_shared import MQTTInitialData, ConnectionManager
-from game_shared import DEVICE_TYPE
-from utils.browserHelper import open_browser, close_browser
+from mqtt_shared import MQTTInitialData, ConnectionManager, Topics
+from game_shared import DEVICE_TYPE, GAME_STATUS
+
+from utils.browser_helper import open_browser, close_browser
 from static.consts import LOGFILE
 
 from routes.gameroutes import game_routes
@@ -24,11 +27,11 @@ init_data = MQTTInitialData(
     password = os.getenv("PASSWORD")
 )
 
-conn_manager = ConnectionManager.initialize(init_data, DEVICE_TYPE.CONTROL, logger)
-
 def create_app():
+    device_id = uuid4()
     app = Flask(__name__)
     app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+    app.config['DEVICE_ID'] = device_id.__str__()
 
     app.register_blueprint(game_routes)
     app.register_blueprint(admin_routes)
@@ -41,6 +44,22 @@ def create_app():
     return app
 
 app = create_app()
+socketio = SocketIO(app)
+
+def on_message(conn, topic, data):
+        if topic == Topics.STATE:
+            future_page = body = None
+            if data["state"] in [GAME_STATUS.DONE.value, GAME_STATUS.STOPPED.value]: future_page = '/game/end'
+
+            body = {
+                'game_status':conn.current_game_status,
+                'matched_list': conn.matched_list
+            }
+
+            socketio.emit('redirect', {"url": future_page, "body": body})
+
+conn_manager = ConnectionManager.initialize(init_data, DEVICE_TYPE.CONTROL, logger, on_message)
+
 
 if __name__ == '__main__':
-    app.run(port=5000)
+    socketio.run(port=5000)

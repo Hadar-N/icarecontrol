@@ -32,8 +32,16 @@
     width: auto;
     display: grid;
     margin: 20px;
-    cursor: pointer;
+    height: 7rem;
 }
-.mini li:hover {
+
+.not-yet-attempted:hover {
+    cursor: pointer;
     background-color: rgba(var(--brown-dark-shade), 0.3);
+}
+
+.fail-attempted {
+    text-decoration: line-through;
+    color: gray;
+    font-size: 3rem;
 }

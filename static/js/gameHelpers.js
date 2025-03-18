@@ -67,40 +67,27 @@ function createListItem(str, options = []) {
     return li;
 }
 
-function finishGame(new_stat, matched_list) {
-    fetch('/savesession', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            status: new_stat,
-            matched: matched_list
-        })
-    }).then(() => window.location.href = '/game/end');
-}
-
-function messageEffects(msg_list, list_elm, matched_list) {
+function messageEffects(msg, list_elm, matched_list) {
     let new_status = false;
     const actions = GameState.getConsts().MQTT_DATA_ACTIONS
-    for (let i of msg_list) {
-        switch (i.type) {
-            case actions.NEW:
-                GameState.addWord(i.word)
-                if (i.word.word && typeof i.word.word === "string") list_elm.prepend(createListItem(i.word.word, i.word.options));
-                break;
-            case actions.REMOVE:
-                document.getElementById(`l-${i.word.word}`).remove();
-                break;
-            case actions.MATCHED:
-                document.getElementById(`l-${i.word.word}`).classList.add("matched");
-                if (isEnglish(i.word.word)) document.getElementById(`sp-${i.word.word}`).disabled = true; // TODO: fix
-                matched_list.push(i.word);
-                break;
-            case actions.STATUS:
-                new_status = i.word;
-                break;
-            default:
-                console.error("type non valid!", i);
-        }
+    switch (msg.type) {
+        case actions.NEW:
+            GameState.addWord(msg.word)
+            if (msg.word.word && typeof msg.word.word === "string") list_elm.prepend(createListItem(msg.word.word, msg.word.options));
+            break;
+        case actions.REMOVE:
+            document.getElementById(`l-${msg.word.word}`).remove();
+            break;
+        case actions.MATCHED:
+            document.getElementById(`l-${msg.word.word}`).classList.add("matched");
+            if (isEnglish(msg.word.word)) document.getElementById(`sp-${msg.word.word}`).disabled = true; // TODO: fix
+            matched_list.push(msg.word);
+            break;
+        case actions.STATUS:
+            GameState.addWord(msg.word)
+            break;
+        default:
+            console.error("type non valid!", i);
     }
     return new_status;
 }

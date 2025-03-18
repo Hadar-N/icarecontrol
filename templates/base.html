@@ -5,6 +5,22 @@
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
     <script src="{{ url_for('static', filename='js/gameHelpers.js') }}"></script>
     <script src="{{ url_for('static', filename='js/gameState.js') }}"></script>
+    <!-- <script src="/socket.io/socket.io.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+    <script>
+        var socket = io();
+
+        socket.on('redirect', function (data) {
+            if (data?.url) {
+                fetch('/savesession', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data.body)
+                }).then(() => window.location.href = data.url);
+            }
+        });
+
+    </script>
 </head>
 
 <body>

@@ -19,15 +19,19 @@
         option_word.textContent = obj.word;
         option_list.innerHTML="";
         for (let opt of obj.options) {
-            item_elm = createListItem(opt)
-            item_elm.onclick = () => fetch('/publish_select', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    word: obj.word,
-                    selected: opt
-                })
-            })
+            item_elm = createListItem(opt.word)
+            if(opt.is_attempted) item_elm.classList.add("fail-attempted");
+            else {
+                item_elm.classList.add('not-yet-attempted');
+                item_elm.onclick = () => fetch('/publish_select', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            word: obj.word,
+                            selected: opt.word
+                        })
+                    })
+                }
             option_list.append(item_elm)
         }
     }

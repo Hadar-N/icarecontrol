@@ -7,9 +7,9 @@ class GAME_MODES(str, Enum):
     ENtoZH = '英↓中'
     ZHtoEN = '中↓英'
 class GAME_LEVELS(str, Enum):
-    BEGINNER = "4th grade"
-    INTERMEDIATE = "5th grade"
-    ADVANCED = "6th grade"
+    BEGINNER = "低年"
+    INTERMEDIATE = "中年"
+    ADVANCED = "高年"
 
 # mqtt consts
 MQTT_TOPIC_CONTROL = "game/control"

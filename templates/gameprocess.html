@@ -37,6 +37,7 @@
 
         const matched_items = [];
         let change_status = false;
+
         supportListScrolling(scrollable_elm)
 
         onClickBothParams = (obj) => {
@@ -45,10 +46,8 @@
 
         evtSource.onmessage = function (event) {
             const new_messages = JSON.parse(event.data);
-            new_messages.forEach(message => {
-                change_status = messageEffects(message, messages_list, matched_items)
-            })
-            if (change_status) finishGame(change_status, matched_items)
+            messageEffects(new_messages, messages_list, matched_items)
+            // TODO: update popup onmessage!
         };
 
         evtSource.onerror = function (err) {

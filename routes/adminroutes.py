@@ -1,11 +1,12 @@
 import time
 import json
-from flask import request, url_for, Response, stream_with_context, session, Blueprint
+from flask import request, url_for, Response, stream_with_context, session, Blueprint, current_app
+
+from mqtt_shared import ConnectionManager, Topics
+from game_shared import GAME_STATUS, MQTT_COMMANDS, MQTT_DATA_ACTIONS
 
 from static.consts import COMMAND_TO_STATUS
-from mqtt_shared import ConnectionManager, Topics, BodyForTopic
-from game_shared import GAME_STATUS, MQTT_COMMANDS, MQTT_DATA_ACTIONS
-from utils.speechSingle import SpeechSingle
+from utils.speech_single import SpeechSingle
         
 admin_routes = Blueprint('adm', __name__)
 
@@ -15,13 +16,14 @@ speech_singleton = SpeechSingle()
 @admin_routes.route('/stream')
 def stream():
     def generate():
-        message_count = 0
+        device_id = current_app.config["DEVICE_ID"]
         while True:
-            current_messages = conn_manager.get_words()
-            if len(current_messages) > message_count:
-                new_messages = current_messages[message_count:]
-                message_count = len(current_messages)
-                yield f"data: {json.dumps(new_messages)}\n\n"
+            try:
+                current_message = conn_manager.get_device_msg(device_id)
+                if(current_message):
+                    yield f"data: {json.dumps(current_message)}\n\n"
+            except ValueError:
+                conn_manager.register_device(device_id)
             time.sleep(1)
 
     return Response(stream_with_context(generate()), mimetype='text/event-stream')
@@ -39,14 +41,10 @@ def speak():
 @admin_routes.route('/publish_command', methods=['POST'])
 def publish_command():
     command = request.json.get('command')
-    conn_manager.publish_message(Topics.CONTROL, BodyForTopic(Topics.CONTROL, {"command": command}))
+    conn_manager.publish_message(Topics.CONTROL, {"command": command})
     result = {
         'status': 'success',
     }
-    if command == MQTT_COMMANDS.STOP:
-        mlist = request.json.get('matched')
-        save_to_session(COMMAND_TO_STATUS[command].value, mlist)
-        result["redirect"] = url_for('game.game_end')
     
     # TODO: error handling
     return json.dumps(result)
@@ -56,8 +54,7 @@ def publish_select():
     word = request.json.get('word')
     selected = request.json.get('selected')
 
-    conn_manager.publish_message(Topics.word_select(word), BodyForTopic(Topics.word_select(word),
-                                                                        {"word": word, "selected": selected}))
+    conn_manager.publish_message(Topics.word_select(word), {"word": word, "selected": selected})
     result = {
         'status': 'success',
     } # TODO: return real result
@@ -76,10 +73,7 @@ def get_consts():
 @admin_routes.route('/savesession', methods=['POST'])
 def save_session():
     data = request.get_json()
-    save_to_session(data['status'], data['matched'])
+    session['game_status'] = data['game_status']
+    session['matched_list'] = data['matched_list']
     speech_singleton.clear_queue()
     return json.dumps({"status": "success"})
-
-def save_to_session(status, matched_list):
-    session['game_status'] = status
-    session['matched_list'] = matched_list

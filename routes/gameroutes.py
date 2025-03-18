@@ -3,7 +3,7 @@ from flask import render_template, redirect, url_for, session, Blueprint
 
 from static.consts import GAME_LEVELS, GAME_MODES, WEB_ACTIONS
 from utils.forms import GameStartForm
-from mqtt_shared import ConnectionManager, Topics, BodyForTopic
+from mqtt_shared import ConnectionManager, Topics
 from game_shared import GAME_STATUS, MQTT_COMMANDS
 
 game_routes = Blueprint('game', __name__)
@@ -23,8 +23,8 @@ def game_start():
 
 @game_routes.route('/game/process')
 def game_process():
-    level = session.get('game_level', GAME_LEVELS.BEGINNER.name)
-    mode = session.get('game_mode', GAME_MODES.ENtoZH.name)
+    level = session.get('game_level')
+    mode = session.get('game_mode')
 
     if (not level or level not in [l.name for l in GAME_LEVELS]) or (not mode or mode not in [l.name for l in GAME_MODES]):
         # TODO: status check
@@ -33,8 +33,7 @@ def game_process():
     
     session.pop('game_level', None)
     
-    msg_data = BodyForTopic(Topics.CONTROL, {"command": MQTT_COMMANDS.START, "level": level, "mode": mode})
-    conn_manager.publish_message(Topics.CONTROL, msg_data)
+    conn_manager.publish_message(Topics.CONTROL, {"command": MQTT_COMMANDS.START, "level": level, "mode": mode})
     return render_template('gameprocess.html', level=level, btns=WEB_ACTIONS)
 
 @game_routes.route('/game/end', methods=['GET'])
