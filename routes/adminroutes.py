@@ -13,21 +13,6 @@ admin_routes = Blueprint('adm', __name__)
 conn_manager = ConnectionManager.get_instance()
 speech_singleton = SpeechSingle()
 
-@admin_routes.route('/stream')
-def stream():
-    def generate():
-        device_id = current_app.config["DEVICE_ID"]
-        while True:
-            try:
-                current_message = conn_manager.get_device_msg(device_id)
-                if(current_message):
-                    yield f"data: {json.dumps(current_message)}\n\n"
-            except ValueError:
-                conn_manager.register_device(device_id)
-            time.sleep(1)
-
-    return Response(stream_with_context(generate()), mimetype='text/event-stream')
-
 @admin_routes.route('/speak', methods=['POST'])
 def speak():
     word = request.json.get('word')
@@ -73,7 +58,7 @@ def get_consts():
 @admin_routes.route('/savesession', methods=['POST'])
 def save_session():
     data = request.get_json()
-    session['game_status'] = data['game_status']
-    session['matched_list'] = data['matched_list']
+    for v,k in data.items():
+        session[v] = data[v]
     speech_singleton.clear_queue()
     return json.dumps({"status": "success"})

@@ -67,13 +67,16 @@ function createListItem(str, options = []) {
     return li;
 }
 
-function messageEffects(msg, list_elm, matched_list) {
+function messageEffects(msg, list_elm, matched_list, sounds) {
     let new_status = false;
     const actions = GameState.getConsts().MQTT_DATA_ACTIONS
     switch (msg.type) {
         case actions.NEW:
             GameState.addWord(msg.word)
-            if (msg.word.word && typeof msg.word.word === "string") list_elm.prepend(createListItem(msg.word.word, msg.word.options));
+            if (msg.word.word && typeof msg.word.word === "string"){
+                list_elm.prepend(createListItem(msg.word.word, msg.word.options));
+                GameState.changeToggle(msg.word.word, true)
+            }
             break;
         case actions.REMOVE:
             document.getElementById(`l-${msg.word.word}`).remove();
@@ -82,14 +85,40 @@ function messageEffects(msg, list_elm, matched_list) {
             document.getElementById(`l-${msg.word.word}`).classList.add("matched");
             if (isEnglish(msg.word.word)) document.getElementById(`sp-${msg.word.word}`).disabled = true; // TODO: fix
             matched_list.push(msg.word);
+            GameState.changeToggle(msg.word.word, false)
+            sounds.success.play()
             break;
         case actions.STATUS:
             GameState.addWord(msg.word)
+            if(GameState.isToggleOpen()) GameState.changeToggle(msg.word.word, true)
+            sounds.fail.play()
             break;
         default:
             console.error("type non valid!", i);
     }
     return new_status;
+}
+
+const changePopUpContent = (title_elm, option_list_elm) => (str) => {
+    obj = GameState.getWord(str);
+    title_elm.textContent = obj.word;
+    option_list_elm.innerHTML="";
+    for (let opt of obj.options) {
+        item_elm = createListItem(opt.word)
+        if(opt.is_attempted) item_elm.classList.add("fail-attempted");
+        else {
+            item_elm.classList.add('not-yet-attempted');
+            item_elm.onclick = () => fetch('/publish_select', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        word: obj.word,
+                        selected: opt.word
+                    })
+                })
+            }
+            option_list_elm.append(item_elm)
+    }
 }
 
 function titleBasedOnStatus(status) {
@@ -101,7 +130,7 @@ function titleBasedOnStatus(status) {
             break;
         case statuses.ACTIVE:
             break;
-        case statuses.HALTED:
+        case statuses.STOPPED:
             res = '<b>Oh no!</b><br />game stopped'
             break;
         default:

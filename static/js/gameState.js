@@ -47,9 +47,11 @@ const GameState = (function () {
         registerOnToggleFunc: (func) => {
             on_toggle_func = func;
         },
-        changeToggle: (str) => {
-            is_toggle = !is_toggle;
-            console.log(str, on_toggle_func)
+        isToggleOpen: () => {
+            return(is_toggle);
+        },
+        changeToggle: (str, force_toggle = null) => {
+            is_toggle = force_toggle == null ? !is_toggle : force_toggle;
 
             if(on_toggle_func && str) {
                 on_toggle_func(str)

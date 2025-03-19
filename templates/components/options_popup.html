@@ -11,32 +11,10 @@
     let is_toggle = false;
     const toggled_elm = document.getElementById('popup-window');
 
-    const option_word = document.getElementById('main-word');
+    const title_elm = document.getElementById('main-word');
     const option_list = document.getElementById('options-list');    
 
-    const changePopUpContent = (str) => {
-        obj = GameState.getWord(str);
-        option_word.textContent = obj.word;
-        option_list.innerHTML="";
-        for (let opt of obj.options) {
-            item_elm = createListItem(opt.word)
-            if(opt.is_attempted) item_elm.classList.add("fail-attempted");
-            else {
-                item_elm.classList.add('not-yet-attempted');
-                item_elm.onclick = () => fetch('/publish_select', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            word: obj.word,
-                            selected: opt.word
-                        })
-                    })
-                }
-            option_list.append(item_elm)
-        }
-    }
-
     GameState.registerToggledObj(toggled_elm);
-    GameState.registerOnToggleFunc(changePopUpContent);
+    GameState.registerOnToggleFunc(changePopUpContent(title_elm, option_list));
 
 </script>

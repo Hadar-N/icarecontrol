@@ -11,9 +11,9 @@
         <span class="list-title">Matched Words:</span>
         <ul id="message-list" class="message-list">
             {% for m in matched %}
-            <li id="l-{{m.word}}">
-                <div id="w-{{m.word}}">{{m.word}}</div>
-                <div id="m-{{m.meaning}}">{{m.meaning}}</div>
+            <li id="l-{{m.word.word}}">
+                <div id="w-{{m.word.word}}">{{m.word.word}}</div>
+                <div id="m-{{m.word.meaning}}">{{m.word.meaning}}</div>
             </li>
             {% endfor %}
         </ul>
@@ -30,6 +30,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
+        new Audio('/static/audio/win.mp3').play()
         document.getElementById('end-title').innerHTML = titleBasedOnStatus('{{ status }}')
 
         const scrollable_list = document.getElementsByClassName('listed')[0];

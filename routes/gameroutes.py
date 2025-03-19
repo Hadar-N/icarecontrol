@@ -15,9 +15,9 @@ def game_start():
     stage_1_choice = form.mode.data if form.mode.data in [l.name for l in GAME_MODES] else ''
 
     if form.validate_on_submit():
+        conn_manager.publish_message(Topics.CONTROL, {"command": MQTT_COMMANDS.START, "level": form.level.data, "mode": stage_1_choice})
         session['game_level'] = form.level.data
         session['game_mode'] = stage_1_choice
-        return redirect(url_for('game.game_process'))
     
     return render_template('gamestart.html', form=form, stage_1_choice=stage_1_choice)
 
@@ -32,20 +32,18 @@ def game_process():
         return redirect(url_for('game.game_start'))
     
     session.pop('game_level', None)
+    session.pop('game_mode', None)
     
     conn_manager.publish_message(Topics.CONTROL, {"command": MQTT_COMMANDS.START, "level": level, "mode": mode})
     return render_template('gameprocess.html', level=level, btns=WEB_ACTIONS)
 
 @game_routes.route('/game/end', methods=['GET'])
 def game_end():
-    status = session.get('game_status')
-    matched = session.get('matched_list', [])
+    status = conn_manager.get_current_game_status()
+    matched = conn_manager.get_matched_list()
 
     if not status or status not in [l.value for l in GAME_STATUS]:
         print('Invalid data. Please start game.', status, matched)
         return redirect(url_for('game.game_start'))
-
-    session.pop('game_status', None)
-    session.pop('matched_list', None)
 
     return render_template('gameend.html', status=status, matched=matched)

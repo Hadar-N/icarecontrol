@@ -32,7 +32,10 @@
     width: auto;
     display: grid;
     margin: 20px;
-    height: 7rem;
+}
+
+.mini li {
+    height: 6rem;
 }
 
 .not-yet-attempted:hover {

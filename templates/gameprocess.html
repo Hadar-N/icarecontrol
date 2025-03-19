@@ -31,12 +31,16 @@
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('start').checked = true;
 
-        const evtSource = new EventSource("/stream");
         const scrollable_elm = document.getElementsByClassName('listed')[0];
         const messages_list = document.getElementById('message-list');
 
         const matched_items = [];
         let change_status = false;
+
+        const sounds = {
+            success: new Audio('/static/audio/success.mp3'),
+            fail: new Audio('/static/audio/fail.mp3')
+        }
 
         supportListScrolling(scrollable_elm)
 
@@ -44,15 +48,13 @@
             clickControlFunc(obj, matched_items)
         }
 
-        evtSource.onmessage = function (event) {
-            const new_messages = JSON.parse(event.data);
-            messageEffects(new_messages, messages_list, matched_items)
-            // TODO: update popup onmessage!
-        };
-
-        evtSource.onerror = function (err) {
-            console.error("EventSource failed:", err);
-        };
+        try{
+            socket.on('word', function (data) {
+                messageEffects(data, messages_list, matched_items, sounds)
+            });
+        } catch (err) {
+            console.log("word change err: ", err)
+        }
     });
 </script>
 
