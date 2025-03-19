@@ -25,6 +25,7 @@ const GameState = (function () {
 
     let toggled_elm= null;
     let is_toggle=null;
+    let curr_toggle_word = null;
     let on_toggle_func = null;
 
     let words = {}
@@ -39,6 +40,9 @@ const GameState = (function () {
         addWord: (obj) => {
             words[obj.word] = obj
         },
+        removeWord: (obj) => {
+            if(words[obj.word]) delete words[obj.word]
+        },
         getWord: (str) => { return(words[str]) },
         registerToggledObj: (elm) => {
             toggled_elm = elm;
@@ -48,13 +52,17 @@ const GameState = (function () {
             on_toggle_func = func;
         },
         isToggleOpen: () => {
-            return(is_toggle);
+            return is_toggle;
+        },
+        currToggleWord: () => {
+            return curr_toggle_word;
         },
         changeToggle: (str, force_toggle = null) => {
             is_toggle = force_toggle == null ? !is_toggle : force_toggle;
 
             if(on_toggle_func && str) {
                 on_toggle_func(str)
+                curr_toggle_word = str
             }
 
             if(toggled_elm) toggled_elm.style.display = is_toggle ? 'block' : 'none';

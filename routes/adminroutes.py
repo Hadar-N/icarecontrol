@@ -23,6 +23,16 @@ def speak():
     }
     return json.dumps(result)
 
+@admin_routes.route('/print_to_terminal', methods=['POST'])
+def print_to_terminal():
+    data = request.json.get('body')
+    print("print_to_terminal: ", data)
+    
+    result = {
+        'status': 'success',
+    }
+    return json.dumps(result)
+
 @admin_routes.route('/publish_command', methods=['POST'])
 def publish_command():
     command = request.json.get('command')

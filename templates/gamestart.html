@@ -47,9 +47,7 @@
 </form>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        start_i = '{{ form._fields }}'.search(/[\{\[]/)
-        end_i = [...'{{ form._fields }}'].reverse().join().search(/[\}\]]/)
-        obj = parseFromFlaskJson('{{ form._fields }}'.substring(start_i, '{{ form._fields }}'.length - end_i + 1))
+        obj = parseFromFlaskJson('{{ form.data }}')
 
         stages = document.getElementsByClassName('formstage')
         return_btn = document.getElementById('returnbtn')
@@ -66,7 +64,6 @@
             }
         }
         changeStage()
-
     })
 </script>
 

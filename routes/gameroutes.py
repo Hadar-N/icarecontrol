@@ -34,8 +34,7 @@ def game_process():
     session.pop('game_level', None)
     session.pop('game_mode', None)
     
-    conn_manager.publish_message(Topics.CONTROL, {"command": MQTT_COMMANDS.START, "level": level, "mode": mode})
-    return render_template('gameprocess.html', level=level, btns=WEB_ACTIONS)
+    return render_template('gameprocess.html', level=GAME_LEVELS[level], btns=WEB_ACTIONS)
 
 @game_routes.route('/game/end', methods=['GET'])
 def game_end():

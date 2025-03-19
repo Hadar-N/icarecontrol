@@ -1,5 +1,5 @@
 function parseFromFlaskJson(str) {
-    return JSON.parse(str.replaceAll(/(&#34;)|(&#39;)|(&lt;)|(&gt;)/g, '"'));
+    return JSON.parse(str.replaceAll(/(&#34;)|(&#39;)|(&lt;)|(&gt;)/g, '"').replaceAll("None", "null"));
 }
 
 function isEnglish(str) {
@@ -36,7 +36,10 @@ function createSpeakerButton(str) {
     svg.src = "/static/icons/speaker.svg";
     svg.alt = "speaker";
     svg.id = `sp-${str}`
-    svg.onclick = () => speakWord(str);
+    svg.onclick = (e) => {
+        e.stopPropagation()
+        speakWord(str)
+    };
     return svg;
 }
 
@@ -58,7 +61,6 @@ function createListItem(str, options = []) {
     div.textContent = str;
     if (is_english) {
         div.prepend(createSpeakerButton(str))
-        speakWord(str)
     }
     if (options.length) {
         div.append(createChooseOptionBtn(str))
@@ -72,14 +74,17 @@ function messageEffects(msg, list_elm, matched_list, sounds) {
     const actions = GameState.getConsts().MQTT_DATA_ACTIONS
     switch (msg.type) {
         case actions.NEW:
-            GameState.addWord(msg.word)
-            if (msg.word.word && typeof msg.word.word === "string"){
+            if (msg.word.word && typeof msg.word.word === "string" && !GameState.getWord(msg.word.word)) {
+                GameState.addWord(msg.word)
                 list_elm.prepend(createListItem(msg.word.word, msg.word.options));
                 GameState.changeToggle(msg.word.word, true)
+                if (isEnglish(msg.word.word)) speakWord(msg.word.word)
             }
             break;
         case actions.REMOVE:
             document.getElementById(`l-${msg.word.word}`).remove();
+            GameState.removeWord(msg.word)
+            if (GameState.isToggleOpen() && GameState.curr_toggle_word() == msg.word.word) GameState.changeToggle(msg.word.word, false)
             break;
         case actions.MATCHED:
             document.getElementById(`l-${msg.word.word}`).classList.add("matched");
@@ -90,7 +95,7 @@ function messageEffects(msg, list_elm, matched_list, sounds) {
             break;
         case actions.STATUS:
             GameState.addWord(msg.word)
-            if(GameState.isToggleOpen()) GameState.changeToggle(msg.word.word, true)
+            if (GameState.isToggleOpen() && GameState.curr_toggle_word() == msg.word.word) GameState.changeToggle(msg.word.word, true)
             sounds.fail.play()
             break;
         default:
@@ -102,22 +107,25 @@ function messageEffects(msg, list_elm, matched_list, sounds) {
 const changePopUpContent = (title_elm, option_list_elm) => (str) => {
     obj = GameState.getWord(str);
     title_elm.textContent = obj.word;
-    option_list_elm.innerHTML="";
+    option_list_elm.innerHTML = "";
     for (let opt of obj.options) {
         item_elm = createListItem(opt.word)
-        if(opt.is_attempted) item_elm.classList.add("fail-attempted");
+        if (opt.is_attempted) item_elm.classList.add("fail-attempted");
         else {
             item_elm.classList.add('not-yet-attempted');
-            item_elm.onclick = () => fetch('/publish_select', {
+            item_elm.onclick = () => {
+                if (isEnglish(str)) speakWord(str)
+                fetch('/publish_select', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
+                    body: JSON.stringify({
                         word: obj.word,
                         selected: opt.word
                     })
                 })
             }
-            option_list_elm.append(item_elm)
+        }
+        option_list_elm.append(item_elm)
     }
 }
 
