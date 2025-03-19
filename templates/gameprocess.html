@@ -4,14 +4,16 @@
 
 <div class="fulldisplay centered center-top">
 
+    {% include 'components/options_popup.html' %}
+
     <div class="top-bar centered">
         <div>game running</div>
-        <div class="level-name">level: {{level}}</div>
+        <div class="level-name">level: {{level|capitalize }}</div>
     </div>
 
     <div class="listed">
         <h3 class="list-title">Messages:</h3>
-        <ul id="message-list"></ul>
+        <ul id="message-list" class="message-list"></ul>
     </div>
 
 </div>
@@ -27,34 +29,32 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        window.APP_CONSTANTS = parseFromFlaskJson('{{ constants }}')
-
         document.getElementById('start').checked = true;
 
-        const evtSource = new EventSource("/stream");
         const scrollable_elm = document.getElementsByClassName('listed')[0];
         const messages_list = document.getElementById('message-list');
 
         const matched_items = [];
         let change_status = false;
+
+        const sounds = {
+            success: new Audio('/static/audio/success.mp3'),
+            fail: new Audio('/static/audio/fail.mp3')
+        }
+
         supportListScrolling(scrollable_elm)
 
         onClickBothParams = (obj) => {
             clickControlFunc(obj, matched_items)
         }
 
-        evtSource.onmessage = function (event) {
-            const new_messages = JSON.parse(event.data);
-            new_messages.forEach(message => {
-                message_obj = JSON.parse(message);
-                change_status = messageEffects(message_obj, messages_list, matched_items)
-            })
-            if (change_status) finishGame(change_status, matched_items)
-        };
-
-        evtSource.onerror = function (err) {
-            console.error("EventSource failed:", err);
-        };
+        try{
+            socket.on('word', function (data) {
+                messageEffects(data, messages_list, matched_items, sounds)
+            });
+        } catch (err) {
+            console.log("word change err: ", err)
+        }
     });
 </script>
 

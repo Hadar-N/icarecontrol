@@ -1,0 +1,20 @@
+<div id="popup-window">
+    <div class="mask"></div>
+    <div class="popup">
+        <span class="ctrl-buttons ctrl-singlebutton" onclick="GameState.changeToggle('')"><img src="/static/icons/close.svg" /></span>
+        <div id="main-word" class="popup-title"></div>
+        <ul id="options-list" class="message-list mini"></ul>
+    </div>
+</div>
+
+<script>
+    let is_toggle = false;
+    const toggled_elm = document.getElementById('popup-window');
+
+    const title_elm = document.getElementById('main-word');
+    const option_list = document.getElementById('options-list');    
+
+    GameState.registerToggledObj(toggled_elm);
+    GameState.registerOnToggleFunc(changePopUpContent(title_elm, option_list));
+
+</script>

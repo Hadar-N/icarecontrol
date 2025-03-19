@@ -9,11 +9,11 @@
 
     <div class="listed">
         <span class="list-title">Matched Words:</span>
-        <ul id="message-list">
+        <ul id="message-list" class="message-list">
             {% for m in matched %}
-            <li id="w-{{m.en}}">
-                <div id="en-{{m.en}}">{{m.en}}</div>
-                <div class="meaning">{{m.zh}}</div>
+            <li id="l-{{m.word.word}}">
+                <div id="w-{{m.word.word}}">{{m.word.word}}</div>
+                <div id="m-{{m.word.meaning}}">{{m.word.meaning}}</div>
             </li>
             {% endfor %}
         </ul>
@@ -30,18 +30,22 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        window.APP_CONSTANTS = JSON.parse('{{ constants }}'.replaceAll(/(&#34;)|(&#39;)/g, '"'));
-
+        new Audio('/static/audio/win.mp3').play()
         document.getElementById('end-title').innerHTML = titleBasedOnStatus('{{ status }}')
 
         const scrollable_list = document.getElementsByClassName('listed')[0];
         supportListScrolling(scrollable_list)
+        const str = scrollable_list.textContent.match(/(?<=Words:[\t\r\n\s]+)[^\t\r\n\s]/g)?.[0]
+        const is_main_english = isEnglish(str)
 
-        const wordItems = document.querySelectorAll('[id^="en-"]');
-        wordItems.forEach(item => {
-            const word = item.id.slice(3);
-            item.prepend(createSpeakerButton(word));
+        const english_items = document.querySelectorAll(`[id^="${is_main_english?"w":"m"}-"]`);
+        const chinese_items = document.querySelectorAll(`[id^="${is_main_english?"m":"w"}-"]`);
+        let speaker_btn;
+        english_items.forEach(item => {
+            speaker_btn = createSpeakerButton(item.id.slice(2))
+            is_main_english ? item.prepend(speaker_btn) : item.append(speaker_btn);
         });
+        chinese_items.forEach(item => item.classList.add("meaning"))
     })
 
 </script>

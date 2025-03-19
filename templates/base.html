@@ -4,6 +4,29 @@
     <title>iCare Control</title>
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
     <script src="{{ url_for('static', filename='js/gameHelpers.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/gameState.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+    <script>
+        try {
+            var socket = io();
+
+            socket.on('redirect', async function (data) {
+                if (data?.url && !window.location.href.match(new RegExp(`${data.url}/?$`))) {
+                    if (data?.body) {
+                        await fetch('/savesession', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data.body)
+                        })
+                    }
+                    window.location.href = data.url;
+                }
+            });
+        } catch (err) {
+            console.log("connection to socket failed", err)
+        }
+
+    </script>
 </head>
 
 <body>

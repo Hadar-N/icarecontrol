@@ -1,12 +1,16 @@
 function parseFromFlaskJson(str) {
-    return JSON.parse(str.replaceAll(/(&#34;)|(&#39;)|(&lt;)|(&gt;)/g,'"'));
+    return JSON.parse(str.replaceAll(/(&#34;)|(&#39;)|(&lt;)|(&gt;)/g, '"'));
+}
+
+function isEnglish(str) {
+    return (str && !!str.match(/^[A-Za-z]/))
 }
 
 function clickControlFunc(elm, matched_list) {
-    fetch('/publish', {
+    fetch('/publish_command', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
             command: elm.getAttribute("command"),
             matched: matched_list
         })
@@ -21,7 +25,7 @@ function speakWord(str) {
     fetch('/speak', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
             word: str
         })
     })
@@ -36,63 +40,97 @@ function createSpeakerButton(str) {
     return svg;
 }
 
-function createListItem(str) {
-    const li = document.createElement('li');
-    li.id = `w-${str}`
+function createChooseOptionBtn(str) {
     const div = document.createElement('div');
+    div.id = `optionbtn-${str}`
+    div.textContent = "choose option"
+    div.classList.add('choose-option-btn')
+    div.onclick = () => GameState.changeToggle(str)
+    return div
+}
+
+function createListItem(str, options = []) {
+    const li = document.createElement('li');
+    li.id = `l-${str}`
+    const is_english = isEnglish(str)
+    const div = document.createElement('div');
+    div.classList.add('main-part')
     div.textContent = str;
-    div.prepend(createSpeakerButton(str))
+    if (is_english) {
+        div.prepend(createSpeakerButton(str))
+        speakWord(str)
+    }
+    if (options.length) {
+        div.append(createChooseOptionBtn(str))
+    }
     li.appendChild(div);
-    speakWord(str)
     return li;
 }
 
-function finishGame(new_stat, matched_list) {
-    fetch('/savesession', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            status: new_stat,
-            matched: matched_list
-        })
-    }).then(() => window.location.href = '/game/end');
-}
-
-function messageEffects(msg_list, list_elm, matched_list) {
+function messageEffects(msg, list_elm, matched_list, sounds) {
     let new_status = false;
-    for (let i of msg_list) {
-        console.log("messageEffects", i)
-        switch (i.type) {
-            case window.APP_CONSTANTS.MQTT_DATA_ACTIONS.NEW:
-                if (i.word.en && typeof i.word.en === "string") list_elm.prepend(createListItem(i.word.en));
-                break;
-            case window.APP_CONSTANTS.MQTT_DATA_ACTIONS.REMOVE:
-                document.getElementById(`w-${i.word.en}`).remove();
-                break;
-            case window.APP_CONSTANTS.MQTT_DATA_ACTIONS.MATCHED:
-                document.getElementById(`w-${i.word.en}`).classList.add("matched");
-                document.getElementById(`sp-${i.word.en}`).disabled = true; // TODO: fix
-                matched_list.push(i.word);
-                break;
-            case window.APP_CONSTANTS.MQTT_DATA_ACTIONS.STATUS:
-                new_status = i.word;
-                break;
-            default:
-                console.error("type non valid!", i);
-        }
+    const actions = GameState.getConsts().MQTT_DATA_ACTIONS
+    switch (msg.type) {
+        case actions.NEW:
+            GameState.addWord(msg.word)
+            if (msg.word.word && typeof msg.word.word === "string"){
+                list_elm.prepend(createListItem(msg.word.word, msg.word.options));
+                GameState.changeToggle(msg.word.word, true)
+            }
+            break;
+        case actions.REMOVE:
+            document.getElementById(`l-${msg.word.word}`).remove();
+            break;
+        case actions.MATCHED:
+            document.getElementById(`l-${msg.word.word}`).classList.add("matched");
+            if (isEnglish(msg.word.word)) document.getElementById(`sp-${msg.word.word}`).disabled = true; // TODO: fix
+            matched_list.push(msg.word);
+            GameState.changeToggle(msg.word.word, false)
+            sounds.success.play()
+            break;
+        case actions.STATUS:
+            GameState.addWord(msg.word)
+            if(GameState.isToggleOpen()) GameState.changeToggle(msg.word.word, true)
+            sounds.fail.play()
+            break;
+        default:
+            console.error("type non valid!", i);
     }
     return new_status;
 }
 
+const changePopUpContent = (title_elm, option_list_elm) => (str) => {
+    obj = GameState.getWord(str);
+    title_elm.textContent = obj.word;
+    option_list_elm.innerHTML="";
+    for (let opt of obj.options) {
+        item_elm = createListItem(opt.word)
+        if(opt.is_attempted) item_elm.classList.add("fail-attempted");
+        else {
+            item_elm.classList.add('not-yet-attempted');
+            item_elm.onclick = () => fetch('/publish_select', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        word: obj.word,
+                        selected: opt.word
+                    })
+                })
+            }
+            option_list_elm.append(item_elm)
+    }
+}
+
 function titleBasedOnStatus(status) {
     let res = '';
-    switch(status) {
-        case window.APP_CONSTANTS.GAME_STATUS.DONE:
+    const statuses = GameState.getConsts().GAME_STATUS
+    switch (status) {
+        case statuses.DONE:
             res = '<b>congratulations!</b><br />game finished!'
             break;
-        case window.APP_CONSTANTS.GAME_STATUS.ACTIVE:
+        case statuses.ACTIVE:
             break;
-        case window.APP_CONSTANTS.GAME_STATUS.HALTED:
+        case statuses.STOPPED:
             res = '<b>Oh no!</b><br />game stopped'
             break;
         default:
@@ -135,12 +173,12 @@ changeStageStyle = (elms, field_names, prev_stage_i, curr_stage_i) => {
     if (prev_stage_i !== curr_stage_i) {
         for (elm of elms) {
             if (elm.id === field_names[curr_stage_i]) {
-                elm.style.opacity= 1
+                elm.style.opacity = 1
                 elm.classList.remove('slide-right', 'slide-left')
-            } else if (elm.id === field_names[prev_stage_i] || !prev_stage_i && field_names.slice(0,curr_stage_i).includes(elm.id)) {
+            } else if (elm.id === field_names[prev_stage_i] || !prev_stage_i && field_names.slice(0, curr_stage_i).includes(elm.id)) {
                 elm.classList.add(prev_stage_i < curr_stage_i || !prev_stage_i ? 'slide-left' : 'slide-right')
             } else if (!prev_stage_i) {
-                elm.style.opacity= 0
+                elm.style.opacity = 0
                 elm.classList.add('slide-right')
             }
         }

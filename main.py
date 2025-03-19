@@ -1,15 +1,19 @@
 import os
 from flask import Flask
 import atexit
+from uuid import uuid4
+from flask_socketio import SocketIO, emit
 
+from utils.browser_helper import open_browser, close_browser
+from utils.create_connection import create_connection
 from routes.gameroutes import game_routes
 from routes.adminroutes import admin_routes
 
-from utils.browserHelper import open_browser, close_browser
-
 def create_app():
+    device_id = uuid4()
     app = Flask(__name__)
     app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+    app.config['DEVICE_ID'] = device_id.__str__()
 
     app.register_blueprint(game_routes)
     app.register_blueprint(admin_routes)
@@ -22,6 +26,8 @@ def create_app():
     return app
 
 app = create_app()
+socketio = SocketIO(app)
+conn_manager = create_connection(socketio)
 
 if __name__ == '__main__':
-    app.run(port=5000)
+    socketio.run(port=5000)

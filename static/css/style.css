@@ -1,6 +1,7 @@
 @import 'vars.css';
 @import 'pages/gamestart.css';
 @import 'pages/gameprocess.css';
+@import 'pages/popup.css';
 
 * {
     margin: 0;
@@ -30,8 +31,8 @@ body {
 }
 
 .fulldisplay {
-    height: 98vh;
-    width: 98vw;
+    height: var(--max-height);
+    width: var(--max-width);
     overflow: hidden;
 }
 
