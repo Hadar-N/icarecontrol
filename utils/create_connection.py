@@ -1,8 +1,5 @@
 import os
-from flask import Flask
-import atexit
 import logging
-from uuid import uuid4
 from dotenv import load_dotenv
 from flask_socketio import SocketIO, emit
 

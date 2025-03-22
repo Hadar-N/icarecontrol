@@ -30,7 +30,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        new Audio('/static/audio/win.mp3').play()
+        if ('{{ status }}' === GameState.getConsts().GAME_STATUS.DONE) new Audio('/static/audio/win.mp3').play()
         document.getElementById('end-title').innerHTML = titleBasedOnStatus('{{ status }}')
 
         const scrollable_list = document.getElementsByClassName('listed')[0];

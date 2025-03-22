@@ -84,7 +84,7 @@ function messageEffects(msg, list_elm, matched_list, sounds) {
         case actions.REMOVE:
             document.getElementById(`l-${msg.word.word}`).remove();
             GameState.removeWord(msg.word)
-            if (GameState.isToggleOpen() && GameState.curr_toggle_word() == msg.word.word) GameState.changeToggle(msg.word.word, false)
+            if (GameState.isToggleOpen() && GameState.currToggleWord() == msg.word.word) GameState.changeToggle(msg.word.word, false)
             break;
         case actions.MATCHED:
             document.getElementById(`l-${msg.word.word}`).classList.add("matched");
@@ -95,7 +95,7 @@ function messageEffects(msg, list_elm, matched_list, sounds) {
             break;
         case actions.STATUS:
             GameState.addWord(msg.word)
-            if (GameState.isToggleOpen() && GameState.curr_toggle_word() == msg.word.word) GameState.changeToggle(msg.word.word, true)
+            if (GameState.isToggleOpen() && GameState.currToggleWord() == msg.word.word) GameState.changeToggle(msg.word.word, true)
             sounds.fail.play()
             break;
         default:
@@ -114,7 +114,7 @@ const changePopUpContent = (title_elm, option_list_elm) => (str) => {
         else {
             item_elm.classList.add('not-yet-attempted');
             item_elm.onclick = () => {
-                if (isEnglish(str)) speakWord(str)
+                if (isEnglish(opt.word)) speakWord(opt.word)
                 fetch('/publish_select', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
