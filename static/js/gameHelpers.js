@@ -1,5 +1,5 @@
-function parseFromFlaskJson(str) {
-    return JSON.parse(str.replaceAll(/(&#34;)|(&#39;)|(&lt;)|(&gt;)/g, '"').replaceAll("None", "null"));
+function updateText(elm_id, str) {
+    document.getElementById(elm_id).textContent = str
 }
 
 function isEnglish(str) {
@@ -131,19 +131,10 @@ const changePopUpContent = (title_elm, option_list_elm) => (str) => {
 
 function titleBasedOnStatus(status) {
     let res = '';
-    const statuses = GameState.getConsts().GAME_STATUS
-    switch (status) {
-        case statuses.DONE:
-            res = '<b>congratulations!</b><br />game finished!'
-            break;
-        case statuses.ACTIVE:
-            break;
-        case statuses.STOPPED:
-            res = '<b>Oh no!</b><br />game stopped'
-            break;
-        default:
-            console.error('unrecognized game status!', status)
-            res = '<b>Game encountered issues...'
+    res = GameState.getStrings()["gameend.html"].title?.[status]
+    if (!res) {
+        console.error('unrecognized game status!', status)
+        res = GameState.getStrings()["gameend.html"].title.error
     }
     return res;
 }

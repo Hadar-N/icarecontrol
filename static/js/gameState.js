@@ -1,27 +1,10 @@
-const handleConsts = async () => {
-    const constsNames = ["MQTT_DATA_ACTIONS", "GAME_STATUS"];
-
-    let consts = {};
-    let temp;
-    for (c_name of constsNames) {
-        temp = sessionStorage.getItem(c_name)
-        if (temp) consts[c_name] = JSON.parse(temp)
-    }
-
-    if(!consts || !Object.keys(consts).length) {
-        const res = await fetch('/getconstants', {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
-        })
-        consts = await res.json()
-        Object.entries(consts).forEach(([k,v]) => sessionStorage.setItem(k, JSON.stringify(v)))
-    }
-    return consts;
+function parseFromFlaskJson(str) {
+    return JSON.parse(str.replaceAll(/(&#34;)|(&#39;)|(&lt;)|(&gt;)/g, '"').replaceAll("None", "null"));
 }
 
 const GameState = (function () {
     let consts = {};
-    handleConsts().then(res => consts = res)
+    let strings = {};
 
     let toggled_elm= null;
     let is_toggle=null;
@@ -33,9 +16,21 @@ const GameState = (function () {
     return {
         getConsts: () => {
             if (!consts) {
-                throw new Error("Consts not yet fetched!")
+                throw new Error("consts not yet fetched!")
             }
             else return consts
+        },
+        setConsts: (str) => {
+            consts = parseFromFlaskJson(str)
+        },
+        getStrings: () => {
+            if (!strings) {
+                throw new Error("strings not yet fetched!")
+            }
+            else return strings
+        },
+        setStrings: (str) => {
+            strings = parseFromFlaskJson(str)
         },
         addWord: (obj) => {
             words[obj.word] = obj

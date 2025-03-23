@@ -1,7 +1,8 @@
 import json
 from flask import render_template, redirect, url_for, session, Blueprint, request
 
-from static.consts import GAME_LEVELS, GAME_MODES, WEB_ACTIONS
+from static.consts import WEB_ACTIONS, FE_CONSTS
+from static.fe_strings import STRINGS
 from utils.forms import GameStartForm
 from mqtt_shared import ConnectionManager, Topics
 from game_shared import GAME_STATUS, MQTT_COMMANDS
@@ -9,10 +10,13 @@ from game_shared import GAME_STATUS, MQTT_COMMANDS
 game_routes = Blueprint('game', __name__)
 conn_manager = ConnectionManager.get_instance()
 
+mode_data = STRINGS["gamestart.html"]["mode"]
+level_data = STRINGS["gamestart.html"]["level"]
+
 @game_routes.route('/game/', methods=['GET', 'POST'])
 def game_start():
     form = GameStartForm()
-    stage_1_choice = form.mode.data if form.mode.data in [l.name for l in GAME_MODES] else ''
+    stage_1_choice = form.mode.data if form.mode.data in mode_data["options"] else ''
 
     if form.validate_on_submit():
         session['game_level'] = form.level.data
@@ -21,14 +25,14 @@ def game_start():
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return json.dumps({'success': True})
     
-    return render_template('gamestart.html', form=form, stage_1_choice=stage_1_choice)
+    return pack_render_temp('gamestart.html', form=form, stage_1_choice=stage_1_choice)
 
 @game_routes.route('/game/process')
 def game_process():
     level = session.get('game_level')
     mode = session.get('game_mode')
 
-    if (not level or level not in [l.name for l in GAME_LEVELS]) or (not mode or mode not in [l.name for l in GAME_MODES]):
+    if (not level or level not in level_data["options"]) or (not mode or mode not in mode_data["options"]):
         # TODO: status check
         print('Invalid game properties. Please select mode and level.')
         return redirect(url_for('game.game_start'))
@@ -36,7 +40,7 @@ def game_process():
     session.pop('game_level', None)
     session.pop('game_mode', None)
     
-    return render_template('gameprocess.html', level=GAME_LEVELS[level], btns=WEB_ACTIONS)
+    return pack_render_temp('gameprocess.html', level=level_data["options"][level], btns=WEB_ACTIONS)
 
 @game_routes.route('/game/end', methods=['GET'])
 def game_end():
@@ -47,4 +51,7 @@ def game_end():
         print('Invalid data. Please start game.', status, matched)
         return redirect(url_for('game.game_start'))
 
-    return render_template('gameend.html', status=status, matched=matched)
+    return pack_render_temp('gameend.html', status=status.value, matched=matched)
+
+def pack_render_temp(url: str, **kwargs):
+    return render_template(url, constants=FE_CONSTS, strings=STRINGS, **kwargs)

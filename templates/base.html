@@ -10,6 +10,9 @@
         try {
             var socket = io();
 
+            GameState.setConsts('{{constants}}')
+            GameState.setStrings('{{strings}}')
+
             socket.on('redirect', async function (data) {
                 if (data?.url && !window.location.href.match(new RegExp(`${data.url}/?$`))) {
                     if (data?.body) {

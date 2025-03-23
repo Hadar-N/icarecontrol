@@ -3,12 +3,13 @@
 
 <div class="fulldisplay centered">
 
-    <div id="end-title" class="cap-text"></div>
+    <div id="end-title" class="cap-text" style="font-weight: 800;"></div>
+    <div id="end-subtitle" class="cap-text"></div>
 
     <br />
 
     <div class="listed">
-        <span class="list-title">Matched Words:</span>
+        <span id="list-title" class="list-title"></span>
         <ul id="message-list" class="message-list">
             {% for m in matched %}
             <li id="l-{{m.word.word}}">
@@ -17,9 +18,8 @@
             </li>
             {% endfor %}
         </ul>
-        <button onclick="clickReturnFunc(this)" class="submit">
+        <button id="submit" onclick="clickReturnFunc(this)" class="submit">
             <!-- <img src="/static/icons/return.svg" alt="play again" /> -->
-            play again
         </button>
     </div>
 </div>
@@ -31,7 +31,12 @@
 
     document.addEventListener('DOMContentLoaded', function () {
         if ('{{ status }}' === GameState.getConsts().GAME_STATUS.DONE) new Audio('/static/audio/win.mp3').play()
-        document.getElementById('end-title').innerHTML = titleBasedOnStatus('{{ status }}')
+        const text_based_on_status = titleBasedOnStatus('{{ status }}')
+
+        updateText("end-title", text_based_on_status["title"])
+        updateText("end-subtitle", text_based_on_status["subtitle"])
+        updateText("list-title", GameState.getStrings()["gameend.html"].list_title)
+        updateText("submit", GameState.getStrings()["gameend.html"].submit_btn)
 
         const scrollable_list = document.getElementsByClassName('listed')[0];
         supportListScrolling(scrollable_list)

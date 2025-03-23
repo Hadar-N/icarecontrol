@@ -7,12 +7,12 @@
     {% include 'components/options_popup.html' %}
 
     <div class="top-bar centered">
-        <div>game running</div>
-        <div class="level-name">level: {{level|capitalize }}</div>
+        <div id="page-title"></div>
+        <div id="level-name" class="level-name"></div>
     </div>
 
     <div class="listed">
-        <h3 class="list-title">Messages:</h3>
+        <h3 id="list-title" class="list-title"></h3>
         <ul id="message-list" class="message-list"></ul>
     </div>
 
@@ -33,6 +33,10 @@
 
         const scrollable_elm = document.getElementsByClassName('listed')[0];
         const messages_list = document.getElementById('message-list');
+
+        updateText("page-title", GameState.getStrings()["gameprocess.html"].title)
+        updateText("level-name", GameState.getStrings()["gameprocess.html"].level_title + '{{level}}')
+        updateText("list-title", GameState.getStrings()["gameprocess.html"].messages_title)
 
         const matched_items = [];
         let change_status = false;

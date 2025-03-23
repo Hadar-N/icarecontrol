@@ -42,7 +42,7 @@
             {% endif %}
         </div>
 
-        <button class="submit" type="submit">Start Game</button>
+        <button class="submit" type="submit" id="submit"></button>
     </div>
 </form>
 <script>
@@ -54,6 +54,8 @@
 
         fields = Object.keys(obj).filter(i => i !== 'csrf_token')
         curr_stage = !!'{{stage_1_choice}}' ? 1 : 0;
+
+        updateText("submit", GameState.getStrings()["gamestart.html"].submit_btn)
 
         changeStage = (e = null) => {
             let temp = e ? (e.id == "returnbtn" ? curr_stage - 1 : curr_stage + 1) : curr_stage;
