@@ -51,7 +51,7 @@ def game_end():
         print('Invalid data. Please start game.', status, matched)
         return redirect(url_for('game.game_start'))
 
-    return pack_render_temp('gameend.html', status=status.value, matched=matched)
+    return pack_render_temp('gameend.html', status=status, matched=matched)
 
 def pack_render_temp(url: str, **kwargs):
     return render_template(url, constants=FE_CONSTS, strings=STRINGS, **kwargs)

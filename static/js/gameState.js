@@ -53,7 +53,7 @@ const GameState = (function () {
             return curr_toggle_word;
         },
         changeToggle: (str, force_toggle = null) => {
-            is_toggle = force_toggle == null ? !is_toggle : force_toggle;
+            is_toggle = force_toggle === null ? !is_toggle : force_toggle;
 
             if(on_toggle_func && str) {
                 on_toggle_func(str)

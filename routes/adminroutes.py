@@ -1,11 +1,9 @@
 import time
 import json
-from flask import request, url_for, Response, stream_with_context, session, Blueprint, current_app
+from flask import request, session, Blueprint
 
 from mqtt_shared import ConnectionManager, Topics
-from game_shared import GAME_STATUS, MQTT_COMMANDS, MQTT_DATA_ACTIONS
 
-from static.consts import COMMAND_TO_STATUS
 from utils.speech_single import SpeechSingle
         
 admin_routes = Blueprint('adm', __name__)
@@ -55,15 +53,6 @@ def publish_select():
     } # TODO: return real result
 
     return result
-
-
-@admin_routes.route('/getconstants', methods=['GET'])
-def get_consts():
-    data = {
-        "MQTT_DATA_ACTIONS": {i.name: i.value for i in MQTT_DATA_ACTIONS},
-        "GAME_STATUS": {i.name: i.value for i in GAME_STATUS}
-    }
-    return json.dumps(data)
 
 @admin_routes.route('/savesession', methods=['POST'])
 def save_session():

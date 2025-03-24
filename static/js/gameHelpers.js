@@ -46,7 +46,7 @@ function createSpeakerButton(str) {
 function createChooseOptionBtn(str) {
     const div = document.createElement('div');
     div.id = `optionbtn-${str}`
-    div.textContent = "choose option"
+    div.textContent = GameState.getStrings()['gameprocess.html'].options_btn
     div.classList.add('choose-option-btn')
     div.onclick = () => GameState.changeToggle(str)
     return div
@@ -70,7 +70,6 @@ function createListItem(str, options = []) {
 }
 
 function messageEffects(msg, list_elm, matched_list, sounds) {
-    let new_status = false;
     const actions = GameState.getConsts().MQTT_DATA_ACTIONS
     switch (msg.type) {
         case actions.NEW:
@@ -82,9 +81,10 @@ function messageEffects(msg, list_elm, matched_list, sounds) {
             }
             break;
         case actions.REMOVE:
-            document.getElementById(`l-${msg.word.word}`).remove();
+            let existing_elm = document.getElementById(`l-${msg.word.word}`)
+            if (GameState.isToggleOpen() && GameState.currToggleWord() == msg.word.word) GameState.changeToggle(msg.word.word, false) // TODO: fix
+            if (existing_elm) existing_elm.remove();
             GameState.removeWord(msg.word)
-            if (GameState.isToggleOpen() && GameState.currToggleWord() == msg.word.word) GameState.changeToggle(msg.word.word, false)
             break;
         case actions.MATCHED:
             document.getElementById(`l-${msg.word.word}`).classList.add("matched");
@@ -94,14 +94,21 @@ function messageEffects(msg, list_elm, matched_list, sounds) {
             sounds.success.play()
             break;
         case actions.STATUS:
-            GameState.addWord(msg.word)
-            if (GameState.isToggleOpen() && GameState.currToggleWord() == msg.word.word) GameState.changeToggle(msg.word.word, true)
-            sounds.fail.play()
+            failed_match = GameState.getWord(msg.word.word)?.options.find(orig_op => {
+                let found = msg.word.options.find(curr_opt => curr_opt.word === orig_op.word)
+                return found.is_attempted !== orig_op.is_attempted
+            })
+            if (failed_match) {
+                GameState.addWord(msg.word)
+                if (GameState.isToggleOpen() && GameState.currToggleWord() == msg.word.word) GameState.changeToggle(msg.word.word, true)
+                sounds.fail.play()
+            }
             break;
+        case actions.SELECT_FAIL:
+            alert(GameState.getStrings()["gameprocess.html"].select_fail) // TODO: change alert to other mechanism! (or else the mqtt messages wont be received!!!)
         default:
-            console.error("type non valid!", i);
+            console.error("type non valid!", msg.type);
     }
-    return new_status;
 }
 
 const changePopUpContent = (title_elm, option_list_elm) => (str) => {
