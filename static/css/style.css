@@ -11,6 +11,9 @@
     user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
+
+    src: url('../fonts/DFT_K90.ttf') format('truetype');
+    font-family: 'DFKai-SB', 'KaiTi', sans-serif;
 }
 
 html {
@@ -26,7 +29,6 @@ body {
   
     padding: var(--spacing-unit);
     text-align: left;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-size: 5vw;    
 }
 

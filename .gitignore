@@ -5,5 +5,8 @@ venv/*
 oldies/*
 tests/*
 
+static/fonts/DFT_K90.ttf
+static/fonts/DFT_K91.ttf
+
 __pycache__/*
 */__pycache__/*
