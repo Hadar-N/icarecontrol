@@ -50,9 +50,10 @@ def publish_select():
     conn_manager.publish_message(Topics.word_select(word), {"word": word, "selected": selected})
     result = {
         'status': 'success',
-    } # TODO: return real result
-
-    return result
+    }
+    
+    # TODO: return real result
+    return json.dumps(result)
 
 @admin_routes.route('/savesession', methods=['POST'])
 def save_session():
