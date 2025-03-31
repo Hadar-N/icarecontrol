@@ -4,6 +4,10 @@ iCareControl is a python program that functions as a remote for the [iCare](http
 
 The project is developed under the supervision of National Tsing Hua University.
 
+## Resources
+- **Audio** – The project's audio files were retrieved from **Pixabay**, which provides royalty-free sound effects
+- **Icons** – Icons used in this program were downloaded as SVGs from **SVGRepo** and are open-licensed
+
 ## Structure
 
 The program has 3 pages following the game process:
@@ -20,12 +24,7 @@ Additionally important logic can be found in:
 
 ## Software Requirements
 
-The application requires usage of the following packages:
-- *python-dotenv* - loads environment variables from a .env file, which acts as the project’s configuration file
-- *Flask* - Creates the web application and manages page rendering
-- *WTForms* - Designs and validates the gamestart form
-- *Flask-SocketIO* - Handles real-time communication of MQTT messages to the web pages
-- *[iCareComm](https://github.com/Hadar-N/icare-comm)* - a private package storing required constants, structures and responsible for managing the MQTT client
+The required libraries/packages for the project are listed in a separate `requirement.txt` file.
 
 ## Required Config
 

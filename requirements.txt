@@ -1,0 +1,6 @@
+python-dotenv==1.0.1
+Flask==3.1.0
+Flask-WTF==1.2.2
+Flask-SocketIO==1.2.2
+pyttsx3==2.98
+git+https://github.com/Hadar-N/icare-comm.git@main#egg=icarecommunication
