@@ -105,7 +105,7 @@ function messageEffects(msg, list_elm, matched_list, sounds) {
             }
             break;
         case actions.SELECT_FAIL:
-            alert(GameState.getStrings()["gameprocess.html"].select_fail) // TODO: change alert to other mechanism! (or else the mqtt messages wont be received!!!)
+            speakWord(GameState.getStrings()["gameprocess.html"].select_fail)
         default:
             console.error("type non valid!", msg.type);
     }
