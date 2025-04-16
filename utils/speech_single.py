@@ -1,7 +1,7 @@
 import os
-import json
 import threading
-import pyttsx3
+import subprocess
+import time
 
 from dotenv import load_dotenv
 
@@ -21,20 +21,27 @@ class SpeechSingle:
             return
 
         load_dotenv(verbose=True, override=True)
-        self.__espeak_engine = pyttsx3.init(driverName='espeak') if os.getenv("ENV") == "pi" else pyttsx3.init()
-        self.__espeak_engine.setProperty('rate', 150) # Speed of speech (default is 200)
+        self.__ispi = os.getenv("ENV") == "pi"
 
         self.__is_speaking = False
         self.__queue = []
         self.__initialized = True
+
+    def __subprocess_speak(self, txt):
+        is_english = txt.isalpha()
+        sleep_len = int(len(txt)/(5 if is_english else 2))
+        subprocess.run(["espeak-ng",
+                        "-v", 'en-gb' if is_english else 'cmn-latn-pinyin',
+                        "-s", str(150),
+                        txt])
+        time.sleep(sleep_len)
 
     def __proccess_queue(self):
         self.__is_speaking = True
 
         while len(self.__queue):
             txt = self.__queue.pop(0)
-            self.__espeak_engine.say(f'{txt} .')
-            self.__espeak_engine.runAndWait()
+            if self.__ispi: self.__subprocess_speak(txt)
 
         self.__is_speaking = False
         
