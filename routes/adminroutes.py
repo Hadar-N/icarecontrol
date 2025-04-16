@@ -14,7 +14,7 @@ speech_singleton = SpeechSingle()
 @admin_routes.route('/speak', methods=['POST'])
 def speak():
     word = request.json.get('word')
-    speech_singleton.speak(f'{word} .')
+    speech_singleton.speak(word)
     
     result = {
         'status': 'success',
