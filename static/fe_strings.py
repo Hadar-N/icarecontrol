@@ -23,8 +23,8 @@ STRINGS = {
         "title": "game running",
         "level_title": "level: ",
         "messages_title": "Messages:",
-        "select_fail": "Selection failed- Not enough contours!",
-        "options_btn": "choose option!"
+        "select_fail": "Please dig another hole first",
+        "options_btn": "choose option"
     },
     "gameend.html": {
         "title": {

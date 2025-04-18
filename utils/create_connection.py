@@ -8,6 +8,9 @@ from game_shared import DEVICE_TYPE, GAME_STATUS
 
 from static.consts import LOGFILE
 
+def close_connection():
+    ConnectionManager.close_connection()
+
 def create_connection(socketio : SocketIO) -> ConnectionManager:
     logging.basicConfig(filename=LOGFILE)
     logger = logging.getLogger(__name__)
