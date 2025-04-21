@@ -12,9 +12,9 @@ STRINGS = {
             "title": "Choose a Level",
             "err_msg": "Please select a game level",
             "options": {
-                "BEGINNER" : "低年",
-                "INTERMEDIATE" : "中年",
-                "ADVANCED" : "高年"
+                "BEGINNER" : "低年級",
+                "INTERMEDIATE" : "中年級",
+                "ADVANCED" : "高年級"
             }
         },
         "submit_btn": "Start Game"
