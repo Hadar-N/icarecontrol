@@ -1,25 +1,43 @@
 from flask_wtf import FlaskForm
-from wtforms import SelectField, RadioField, ValidationError
+from wtforms import StringField, RadioField, ValidationError
 
 from static.fe_strings import STRINGS
 
-level_data = STRINGS["gamestart.html"]["level"]
-mode_data = STRINGS["gamestart.html"]["mode"]
+gamestart_strings = STRINGS["gamestart.html"]
 
 def ValidateLevel(form, field):
-    if not (field.data and field.data in level_data["options"]):
-        raise ValidationError(level_data["err_msg"])
+    if not (field.data and field.data in gamestart_strings["level"]["options"]):
+        raise ValidationError(gamestart_strings["level"]["err_msg"])
 
 def ValidateMode(form, field):
-    if not (field.data and field.data in mode_data["options"]):
-        raise ValidationError(mode_data["err_msg"])
+    if not (field.data and field.data in gamestart_strings["mode"]["options"]):
+        raise ValidationError(gamestart_strings["mode"]["err_msg"])
 
 class GameStartForm(FlaskForm):
-    mode = RadioField(mode_data["title"], 
-        choices=[(v[0], v[1]) for v in mode_data["options"].items()],
+    mode = RadioField(gamestart_strings["mode"]["title"], 
+        choices=[(v[0], v[1]) for v in gamestart_strings["mode"]["options"].items()],
         validators=[ValidateMode],
     )
-    level = RadioField(level_data["title"], 
-        choices=[(v[0], v[1]) for v in level_data["options"].items()],
+    level = RadioField(gamestart_strings["level"]["title"], 
+        choices=[(v[0], v[1]) for v in gamestart_strings["level"]["options"].items()],
         validators=[ValidateLevel],
     )
+
+    def getStages(self):
+        return [{
+            "type": "non-active",
+            "name": "home",
+            "reference": gamestart_strings["home"]
+        },
+        {
+            "type": "radio",
+            "name": "mode",
+            "reference": self.mode,
+            "img_support": 0
+        },
+        {
+            "type": "radio",
+            "name": "level",
+            "reference": self.level,
+            "img_support": 1
+        }]
