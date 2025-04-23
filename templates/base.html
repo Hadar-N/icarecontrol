@@ -25,15 +25,25 @@
                     window.location.href = data.url;
                 }
             });
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const game_name_elm = document.getElementById('gamename')
+                const game_config_elm = document.getElementById('gameconfig')
+                game_name_elm.textContent = GameState.getStrings()["game_name"]
+            })
+
         } catch (err) {
             console.log("connection to socket failed", err)
         }
-
     </script>
 </head>
 
 <body>
-    {% block body %}{% endblock %}
+    <div class="fulldisplay centered">
+        <div id="gamename" class="game-title"></div>
+        <div id="gameconfig" class="game-config"></div>
+        {% block body %}{% endblock %}
+    </div>
 </body>
 
 </html>

@@ -33,7 +33,9 @@ def create_connection(socketio : SocketIO) -> ConnectionManager:
                     future_page = '/game/process'
                 # print("pre-emit: ", future_page)
                 socketio.emit('redirect', {"url": future_page})
+            elif topic == Topics.CONTOURS:
+                socketio.emit('contours', data)
             elif Topics.is_word_state(topic):
-                socketio.emit('word', data)             
+                socketio.emit('word', data)
 
     return ConnectionManager.initialize(init_data, DEVICE_TYPE.CONTROL, logger, on_message)

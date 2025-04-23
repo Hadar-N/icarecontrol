@@ -14,13 +14,12 @@ function printInPythonTerminal(str) {
     })
 }
 
-function clickControlFunc(elm, matched_list) {
+function clickControlFunc(elm) {
     fetch('/publish_command', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            command: elm.getAttribute("command"),
-            matched: matched_list
+            command: elm.getAttribute("command")
         })
     })
         .then(res => res.json())
@@ -39,15 +38,29 @@ function speakWord(str) {
     })
 }
 
-function createSpeakerButton(str) {
+function selectOptions(word, opt) {
+    fetch('/publish_select', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            word,
+            selected: opt
+        })
+    })
+}
+
+function createSpeakerButton(str, add_onclick = true) {
     const svg = document.createElement('img');
     svg.src = "/static/icons/speaker.svg";
     svg.alt = "speaker";
+    svg.classList.add('spkr-img')
     svg.id = `sp-${str}`
+    if(add_onclick) {
     svg.onclick = (e) => {
         e.stopPropagation()
         speakWord(str)
     };
+    }
     return svg;
 }
 

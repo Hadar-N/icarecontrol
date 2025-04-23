@@ -50,6 +50,13 @@ body {
     justify-content: start;
 }
 
+.game-title {
+    margin-top: 80px;
+}
+.game-config{
+    font-size: var(--mini-fontsize);
+}
+
 .top-bar {
     height: 30vh;
     width: 100%;

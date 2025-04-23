@@ -11,7 +11,6 @@
     <div id="{{stage.name}}" class="formstage">
         {% set field = stage.reference %}
         {% if stage.type == "radio" %}
-            {{ field.label }}
             <p>
             <div class="bigradio cap-text">
                 {% for subfield in field %}
@@ -27,8 +26,11 @@
                 {% endfor %}
             </div>
         {% else %}
-            <div>{{field.title}}</div>
+            <div class="centered">
+                <img class="mainimg" src="{{ url_for('static', filename='images/' + field.img) }}" alt="{{field.title}}" />
+            </div>
             <btn class="submit" onclick='changeStage("{{stage.name}}")'>{{field.btn}}</btn>
+            <div class="copyrights">{{field.copyrights}}</div>
         {% endif %}
     </div>
     {% endfor %}

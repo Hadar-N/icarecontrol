@@ -1,27 +1,18 @@
 {% extends "base.html" %}
 {% block body %}
 
-
 <div class="fulldisplay centered center-top">
 
-    {% include 'components/options_popup.html' %}
+    {% include 'components/word_table.html' %}
 
-    <div class="top-bar centered">
-        <div id="page-title"></div>
-        <div id="level-name" class="level-name"></div>
-    </div>
-
-    <div class="listed">
-        <h3 id="list-title" class="list-title"></h3>
-        <ul id="message-list" class="message-list"></ul>
-    </div>
+    {% include 'components/instructions_field.html' %}
 
 </div>
 
 <div class="ctrl-buttons">
     {% for btn in btns %}
     <input type="radio" name="ctrl-buttons" id="{{btn.value}}" value="{{btn.value}}" />
-    <label for="{{btn.value}}" class="ctrl-singlebutton" command="{{btn.value}}" onclick="onClickBothParams(this)">
+    <label for="{{btn.value}}" class="ctrl-singlebutton" command="{{btn.value}}" onclick="onClickControl(this)">
         <img class="ctrl-img" src="/static/icons/{{btn.value}}.svg" alt="{{btn.value}}" />
     </label>
     {% endfor %}
@@ -29,33 +20,57 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+
         document.getElementById('start').checked = true;
+        strings = GameState.getStrings()["gameprocess.html"]
+        data_actions = GameState.getConsts().MQTT_DATA_ACTIONS
+        active_contours = 0;
 
-        const scrollable_elm = document.getElementsByClassName('listed')[0];
-        const messages_list = document.getElementById('message-list');
-
-        updateText("page-title", GameState.getStrings()["gameprocess.html"].title)
-        updateText("level-name", GameState.getStrings()["gameprocess.html"].level_title + '{{level}}')
-        updateText("list-title", GameState.getStrings()["gameprocess.html"].messages_title)
-
-        const matched_items = [];
-        let change_status = false;
+        applyInsructions(0)
 
         const sounds = {
             success: new Audio('/static/audio/success.mp3'),
             fail: new Audio('/static/audio/fail.mp3')
         }
 
-        supportListScrolling(scrollable_elm)
-
-        onClickBothParams = (obj) => {
-            clickControlFunc(obj, matched_items)
+        onClickControl = (obj) => {
+            clickControlFunc(obj)
         }
 
-        try{
-            socket.on('word', function (data) {
-                messageEffects(data, messages_list, matched_items, sounds)
+        try {
+            socket.on('word', data => {
+                switch (data.type) {
+                    case data_actions.NEW:
+                        displayTable(data.word); // TODO : what happend if 2 contours at once?
+                        break;
+                    case data_actions.REMOVE:
+                        turnoffTable();
+                        applyInsructions(4);
+                        break;
+                    case data_actions.STATUS:
+                        rerenderOptions(data.word);
+                        applyInsructions(2);
+                        break;
+                    case data_actions.MATCHED:
+                        matchedWord();
+                        applyInsructions(3);
+                        break;
+                    case data_actions.SELECT_FAIL:
+                        speakWord(strings.instructions.dig_2)
+                        break;
+                    default:
+                        printInPythonTerminal('action type unaccepted:'+ data.type)
+                }
             });
+            socket.on("contours", data => {
+                if (data.contours > active_contours && isOptionsDisplayable()) {
+                    displayOptions();
+                    applyInsructions(1);
+                } else if (data.contours == 0) {
+                    applyInsructions(0);
+                }
+                active_contours = data.contours
+            })
         } catch (err) {
             console.log("word change err: ", err)
         }
