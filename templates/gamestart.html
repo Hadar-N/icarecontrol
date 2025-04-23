@@ -1,71 +1,83 @@
 {% extends "base.html" %}
 {% block body %}
 
-<form method="POST" class="fulldisplay centered">
+<form id="formelm" method="POST" class="fulldisplay centered">
     {{ form.csrf_token }}
-    <div id="returnbtn" class="ctrl-buttons ctrl-singlebutton" onclick="changeStage(this)">
+    <div id="returnbtn" class="ctrl-buttons ctrl-singlebutton" onclick="changeStage('returnbtn')">
         <img class="ctrl-img" src="/static/icons/return.svg" alt="return" />
     </div>
 
-    <div id="{{form.mode.name}}" class="formstage">
-        {{ form.mode.label }}
-        <p>
-        <div class="bigradio">
-            {% for subfield in form.mode %}
-            {{ subfield }}
-            <label for="{{subfield.id}}" class="singleradioitem" onclick="changeStage(this)">
-                <span class="charperline">{{ subfield.label }}</span>
-            </label>
-            {% endfor %}
-        </div>
+    {% for stage in form.getStages() %}
+    <div id="{{stage.name}}" class="formstage">
+        {% set field = stage.reference %}
+        {% if stage.type == "radio" %}
+            {{ field.label }}
+            <p>
+            <div class="bigradio cap-text">
+                {% for subfield in field %}
+                    {{ subfield }}
+                    <label for="{{subfield.id}}" class="singleradioitem" onclick="changeStage('{{stage.name}}')">
+                        {% if stage.img_support %}
+                            <img src="{{ url_for('static', filename='icons/' + subfield.data + '.svg') }}"
+                                alt="{{ subfield.label.text }}" />
+                            <br />
+                        {% endif %}
+                        <span>{{ subfield.label }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div>{{field.title}}</div>
+            <btn class="submit" onclick='changeStage("{{stage.name}}")'>{{field.btn}}</btn>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <div class="errcontainer">
+        {% if form.level.errors %}
+        <span class="errormsg">{{ form.level.errors[-1] }}</span>
+        {% endif %}
     </div>
 
-    <div id="{{form.level.name}}" class="formstage">
-        {{ form.level.label }}
-        <p>
-        <div class="bigradio cap-text">
-            {% for subfield in form.level %}
-            {{ subfield }}
-            <label for="{{subfield.id}}" class="singleradioitem">
-                <img src="{{ url_for('static', filename='icons/' + subfield.data + '.svg') }}"
-                    alt="{{ subfield.label.text }}" />
-                <br />
-                <span>{{ subfield.label.text }}</span>
-            </label>
-            {% endfor %}
-        </div>
-        <br />
-
-        <div class="errcontainer">
-            {% if form.level.errors %}
-            <span class="errormsg">{{ form.level.errors[-1] }}</span>
-            {% endif %}
-        </div>
-
-        <button class="submit" type="submit" id="submit"></button>
-    </div>
 </form>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        obj = parseFromFlaskJson('{{ form.data }}')
+        stages = parseFromFlaskJson('{{ form.getStages() }}')
+        stages_elm = Array.from(document.getElementsByClassName('formstage'))
+        stages.forEach(s => s.elm = stages_elm.find(e => s.name == e.id))
 
-        stages = document.getElementsByClassName('formstage')
         return_btn = document.getElementById('returnbtn')
+        form_elm = document.getElementById('formelm')
+        curr_stage = "{{stage_1_choice}}" ? 2 : 0;
 
-        fields = Object.keys(obj).filter(i => i !== 'csrf_token')
-        curr_stage = !!'{{stage_1_choice}}' ? 1 : 0;
+        apply_stage_styles = (next_i) => {
+            if (next_i == curr_stage) {
+                    stages[next_i].elm.style.opacity = 1
+                    stages[next_i].elm.classList.remove('slide-right', 'slide-left')
+            } else stages[next_i].elm.classList.add(next_i < curr_stage ? 'slide-left' : 'slide-right')
+            return_btn.style.display = curr_stage == 0 ? 'none' : 'block';
+        }
 
-        updateText("submit", GameState.getStrings()["gamestart.html"].submit_btn)
+        changeStage = (txt) => {
+            temp_curr = curr_stage;
+            if (txt == "returnbtn") {
+                if(curr_stage < 1) {
+                    printInPythonTerminal('return clicked when in stage 0!')
+                    return;
+                }
+                curr_stage--
+            } else if (curr_stage == stages.length - 1) setTimeout(() => form_elm.submit(), 10)
+            else curr_stage++
 
-        changeStage = (e = null) => {
-            let temp = e ? (e.id == "returnbtn" ? curr_stage - 1 : curr_stage + 1) : curr_stage;
-            if (temp >= 0 && temp < fields.length) {
-                changeStageStyle(stages, fields, e && curr_stage, temp)
-                displayIfNotInitial(return_btn, temp)
-                curr_stage = temp
+            if (curr_stage !== temp_curr) {
+                apply_stage_styles(temp_curr);
+                apply_stage_styles(curr_stage);
             }
         }
-        changeStage()
+
+        for (let i = 0; i < stages.length; i++) {
+            apply_stage_styles(i)
+        }
     })
 </script>
 

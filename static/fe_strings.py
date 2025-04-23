@@ -1,5 +1,9 @@
 STRINGS = {
     "gamestart.html": {
+        "home": {
+            "title": "Welcome to SandGame",
+            "btn": "Start Game!"
+        },
         "mode": {
             "title": "Game Modes",
             "err_msg": "Please select a game mode",
@@ -17,7 +21,6 @@ STRINGS = {
                 "ADVANCED" : "高年級"
             }
         },
-        "submit_btn": "Start Game"
     },
     "gameprocess.html": {
         "title": "game running",
