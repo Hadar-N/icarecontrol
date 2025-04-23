@@ -4,10 +4,6 @@
 <div class="fulldisplay centered">
 
     <div id="end-title" class="cap-text" style="font-weight: 800;"></div>
-    <div id="end-subtitle" class="cap-text"></div>
-
-    <br />
-
     <div class="listed">
         <span id="list-title" class="list-title"></span>
         <ul id="message-list" class="message-list">
@@ -30,13 +26,14 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        if ('{{ status }}' === GameState.getConsts().GAME_STATUS.DONE) new Audio('/static/audio/win.mp3').play()
-        const text_based_on_status = titleBasedOnStatus('{{ status }}')
+        is_done = '{{ status }}' === GameState.getConsts().GAME_STATUS.DONE;
+        strings = GameState.getStrings()["gameend.html"]
+        if (is_done) {
+            new Audio('/static/audio/win.mp3').play()
+            document.getElementById("end-title").textContent = strings.congrats
+        }
 
-        updateText("end-title", text_based_on_status["title"])
-        updateText("end-subtitle", text_based_on_status["subtitle"])
-        updateText("list-title", GameState.getStrings()["gameend.html"].list_title)
-        updateText("submit", GameState.getStrings()["gameend.html"].submit_btn)
+        document.getElementById("submit").textContent = strings.submit_btn
 
         const scrollable_list = document.getElementsByClassName('listed')[0];
         supportListScrolling(scrollable_list)

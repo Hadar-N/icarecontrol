@@ -3,7 +3,7 @@
 .bigradio {
     display: flex;
     justify-content: center;
-    font-size: 50px;
+    font-size: var(--main-fontsize);
     text-align: center;
 }
 
@@ -43,12 +43,24 @@
     font-size: .7em;
 }
 
+.copyrights {
+    font-size: var(--mini-fontsize);
+    font-weight: 100;
+}
+
+.mainimg {
+    max-width: 60vw;
+    max-height: 40vh;
+    margin: 20px;
+}
+
 .formstage {
     display: block;
     position: absolute;
     transition: transform 1s ease, opacity 0.5s ease;
     transform: translateX(0);
     opacity: 0;
+    margin: 30px;
 }
 
 .slide-left {
@@ -60,12 +72,17 @@
 
 .submit {
     cursor: pointer;
+
+    display:block;
+    justify-self: center;
+    width: fit-content;
     padding: 7px 50px;
+    margin: 20px;
+    
     background-color: rgb(var(--almost-black));
     color: white;
     border: none;
     border-radius: var(--spacing-unit);
     mix-blend-mode: darken;
     text-transform: capitalize;
-    margin: 50px;
 }

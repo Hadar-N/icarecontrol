@@ -1,0 +1,13 @@
+<div id="instructions" class="instructions"></div>
+
+<script>
+    instructions_elm = document.getElementById('instructions');
+    instruction_stage = 0;
+
+    applyInsructions = (num) =>{
+        instruction_stage = num
+        instructions_elm.innerHTML = strings.instructions.symbol + ' '
+                                    + strings.instructions_by_stage[instruction_stage].map(k => strings.instructions[k]).join('<br/>')
+    }
+
+</script>
