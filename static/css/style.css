@@ -55,6 +55,7 @@ body {
 }
 .game-config {
     font-size: var(--mini-fontsize);
+    color: #0070c0;
 }
 
 .cap-text {

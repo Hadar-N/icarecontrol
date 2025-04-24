@@ -12,6 +12,8 @@
 
             GameState.setConsts('{{constants}}')
             GameState.setStrings('{{strings}}')
+            GameState.setCurrLevel('{{level}}')
+            GameState.setCurrMode('{{mode}}')
 
             socket.on('redirect', async function (data) {
                 if (data?.url && !window.location.href.match(new RegExp(`${data.url}/?$`))) {
@@ -30,6 +32,7 @@
                 const game_name_elm = document.getElementById('gamename')
                 const game_config_elm = document.getElementById('gameconfig')
                 game_name_elm.textContent = GameState.getStrings()["game_name"]
+                game_config_elm.textContent = [GameState.getCurrModeStr(), GameState.getCurrLevelStr()].filter(i => i).join(' / ')
             })
 
         } catch (err) {
