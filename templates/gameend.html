@@ -5,7 +5,6 @@
 
     <div id="end-title" class="cap-text" style="font-weight: 800;"></div>
     <div class="listed">
-        <span id="list-title" class="list-title"></span>
         <ul id="message-list" class="message-list">
             {% for m in matched %}
             <li id="l-{{m.word.word}}">
@@ -14,9 +13,7 @@
             </li>
             {% endfor %}
         </ul>
-        <button id="submit" onclick="clickReturnFunc(this)" class="submit">
-            <!-- <img src="/static/icons/return.svg" alt="play again" /> -->
-        </button>
+        <button id="submit" onclick="clickReturnFunc(this)" class="submit"></button>
     </div>
 </div>
 <script>

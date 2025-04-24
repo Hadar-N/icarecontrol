@@ -1,7 +1,3 @@
-.level-name {
-    font-size: .5em;
-}
-
 .instructions {
     font-size: var(--mini-fontsize);
 }
@@ -20,11 +16,13 @@ table {
     font-weight: 900;
     border-bottom: 3px solid rgb(var(--almost-black));
 }
+
 .spkr-img {
     height: 40px;
     width: 40px;
     margin: 0 20px;
 }
+
 .option {
     font-weight: 100;
     height: 1.2em;
@@ -50,69 +48,6 @@ table {
 .successful {
     color: beige;
     background-color: rgba(13, 156, 13, 0.7);
-}
-
-.listed {
-    overflow-y: scroll;
-    user-select: none;
-    touch-action: pan-y;
-    overscroll-behavior-y: contain;
-
-    width: 100%;
-    display: grid;
-    justify-items: center;
-}
-.list-title {
-    margin-top: var(--spacing-unit);
-}
-
-.message-list {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    width: 70vw;
-}
-.message-list li {
-    border: 1px solid rgb(var(--almost-black));
-    border-radius: var(--spacing-unit);
-    padding: 3px 20px;
-    margin: 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.message-list .matched {
-    color: rgba(var(--brown-dark-shade), 0.85);
-    border: 1px solid rgba(var(--brown-dark-shade), 0.85);
-}
-
-.message-list .main-part{
-    display: flex;
-    align-items: baseline;
-}
-.message-list .choose-option-btn {
-    font-size: .35em;
-    font-weight: 200;
-    color:rgba(var(--brown-dark-shade), 1);
-    background-color: bisque;
-    border: 1.5px solid;
-    border-radius: 15px;
-    margin-left: 15px;
-    padding: 0 10px;
-    cursor: pointer;
-}
-.message-list .matched .choose-option-btn{
-    display: none;
-}
-
-.message-list .matched img {
-    opacity: 0;
-    cursor:default;
-}
-.message-list .meaning {
-    color: rgb(var(--almost-black), .6);
-    font-size: .5em;
-    font-weight: 700;
 }
 
 .ctrl-buttons {

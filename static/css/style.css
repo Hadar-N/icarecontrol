@@ -1,7 +1,7 @@
 @import 'vars.css';
 @import 'pages/gamestart.css';
 @import 'pages/gameprocess.css';
-@import 'pages/popup.css';
+@import 'pages/gameend.css';
 
 * {
     margin: 0;
@@ -53,14 +53,8 @@ body {
 .game-title {
     margin-top: 80px;
 }
-.game-config{
+.game-config {
     font-size: var(--mini-fontsize);
-}
-
-.top-bar {
-    height: 30vh;
-    width: 100%;
-    border-bottom: 3px solid rgba(var(--brown-dark-shade), 0.8);
 }
 
 .cap-text {
