@@ -34,15 +34,13 @@
 
         const scrollable_list = document.getElementsByClassName('listed')[0];
         supportListScrolling(scrollable_list)
-        const str = scrollable_list.textContent.match(/(?<=Words:[\t\r\n\s]+)[^\t\r\n\s]/g)?.[0]
-        const is_main_english = isEnglish(str)
 
-        const english_items = document.querySelectorAll(`[id^="${is_main_english?"w":"m"}-"]`);
-        const chinese_items = document.querySelectorAll(`[id^="${is_main_english?"m":"w"}-"]`);
+        const english_items = document.querySelectorAll(`[id^="${isEnglishMode()?"w":"m"}-"]`);
+        const chinese_items = document.querySelectorAll(`[id^="${isEnglishMode()?"m":"w"}-"]`);
         let speaker_btn;
         english_items.forEach(item => {
             speaker_btn = createSpeakerButton(item.id.slice(2))
-            is_main_english ? item.prepend(speaker_btn) : item.append(speaker_btn);
+            isEnglishMode() ? item.prepend(speaker_btn) : item.append(speaker_btn);
         });
         chinese_items.forEach(item => item.classList.add("meaning"))
     })

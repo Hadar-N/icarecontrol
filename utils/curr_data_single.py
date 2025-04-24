@@ -20,6 +20,11 @@ class CurrDataSingle():
         self.__status = GAME_STATUS.HALTED
         self.__initialized = True
 
+    def restart_config(self):
+        self.__level = None
+        self.__mode = None
+        self.clear_wordlist()
+
     @property
     def matched_words(self):
         return self.__matched_words
@@ -30,7 +35,6 @@ class CurrDataSingle():
 
     def __setproperty(self, val: str, prop_name: str, enum_options: EnumType, is_allow_none: bool = True) -> True:
         res = False
-        print(is_allow_none, val, [a.name for a in enum_options], (is_allow_none and not val), val in [a.value for a in enum_options])
         if (is_allow_none and not val) or val in [a.name for a in enum_options]: res = True
         else: print(f"invalid {prop_name}: {val}")
         return res

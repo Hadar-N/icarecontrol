@@ -1,5 +1,5 @@
 import json
-from flask import render_template, redirect, url_for, session, Blueprint, request
+from flask import render_template, redirect, url_for, Blueprint, request, after_this_request
 
 from static.consts import WEB_ACTIONS, FE_CONSTS
 from static.fe_strings import STRINGS
@@ -39,18 +39,21 @@ def game_process():
         print('Invalid game properties. Please select mode and level.')
         return redirect(url_for('game.game_start'))
         
-    return pack_render_temp('gameprocess.html', level=level_data["options"][level], btns=WEB_ACTIONS)
+    return pack_render_temp('gameprocess.html', btns=WEB_ACTIONS)
 
 @game_routes.route('/game/end', methods=['GET'])
 def game_end():
     status = data_singleton.status
     matched = data_singleton.matched_words
-    data_singleton.level = None
-    data_singleton.mode = None
 
     if not status or status not in [l.value for l in GAME_STATUS]:
         print('Invalid data. Please start game.', status, matched)
         return redirect(url_for('game.game_start'))
+    
+    @after_this_request
+    def refresh_gamestats(res):
+        data_singleton.restart_config()
+        return res
 
     return pack_render_temp('gameend.html', status=status, matched=matched)
 

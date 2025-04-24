@@ -1,5 +1,5 @@
-function isEnglish(str) {
-    return (str && !!str.match(/^[A-Za-z]/))
+function isEnglishMode() {
+    return GameState.getCurrModeStr() && !!GameState.getCurrModeStr().match(/英文/)
 }
 
 function printInPythonTerminal(str) {
@@ -63,7 +63,7 @@ function createSpeakerButton(str, add_onclick = true) {
 function createListItem(str) {
     const li = document.createElement('li');
     li.id = `l-${str}`
-    const is_english = isEnglish(str)
+    const is_english = !str.match(/[^A-Za-z1-9 \-]/)
     const div = document.createElement('div');
     div.classList.add('main-part')
     div.textContent = str;

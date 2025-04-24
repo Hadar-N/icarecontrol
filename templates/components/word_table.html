@@ -43,13 +43,23 @@
         return x_elm
     }
 
-    // TODO: check for game mode and add the speakers accordingly
-    speaker_btn = createSpeakerButton("speaker", false)
-    speaker_btn.onclick = () => current_word && speakWord(current_word.word)
-    word_elm.children[0].prepend(speaker_btn)
+    if(isEnglishMode()) {
+        speaker_btn = createSpeakerButton("speaker", false)
+        speaker_btn.onclick = () => current_word && speakWord(current_word.word)
+        word_elm.children[0].append(speaker_btn)
+    } else {
+        for (let i = 0; i < options_elm.length; i++) {
+            speaker_btn = createSpeakerButton("speaker", false)
+            speaker_btn.onclick = () => {
+                if (current_word && current_word.options.length && !current_word.options[i].is_attempted) {
+                    speakWord(current_word.options[i].word)
+                }
+            }
+            options_elm[i].children[0].append(speaker_btn)
+        }
+    }
 
     isOptionsDisplayable = () => {
-        console.log("isOptionsDisplayable", current_word, Number(options_elm[0].style.opacity), " => ", current_word && !Number(options_elm[0].style.opacity))
         return current_word && !Number(options_elm[0].style.opacity)
     }
 
