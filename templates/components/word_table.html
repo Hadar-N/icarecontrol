@@ -7,7 +7,7 @@
     </tr>
     {% for ix in range(0,3) %}
     <tr>
-        <td id="opt-{{ix}}" class="option{{" last-item" if ix==2 else "" }}" onclick="onOptionClick(this)">
+        <td id="opt-{{ix}}" class='option{{" last-item" if ix==2 else "" }}' onclick="onOptionClick(this)">
             <span id="for-speaker"></span>
             <span id="opt_txt-{{ix}}" class="option-txt"></span>
             <span id="for-result-img"></span>
@@ -17,110 +17,120 @@
 </table>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
 
-    current_word = null;
-    current_chosen = null;
+        current_word = null;
+        current_chosen = null;
 
-    table_elm = document.getElementById('word-table');
-    word_elm = document.getElementById('word-orig');
-    options_elm = Array.from(document.getElementsByClassName('option')).sort((a, b) => Number(a.id.split('-')[1]) > Number(b.id.split('-')[1]) ? 1 : -1);
-    
-    xv_indicators = [
-        {
-            "class": "attempted",
-            "icon_url": "x.svg"
-        },{
-            "class": "successful",
-            "icon_url": "v.svg"
+        table_elm = document.getElementById('word-table');
+        word_elm = document.getElementById('word-orig');
+        options_elm = Array.from(document.getElementsByClassName('option')).sort((a, b) => Number(a.id.split('-')[1]) > Number(b.id.split('-')[1]) ? 1 : -1);
+
+        xv_indicators = [
+            {
+                "class": "attempted",
+                "sound": new Audio('/static/audio/fail.mp3'),
+                "icon_url": "x.svg"
+            }, {
+                "class": "successful",
+                "sound": new Audio('/static/audio/success.mp3'),
+                "icon_url": "v.svg"
+            }
+        ]
+
+        createXVIcon = (url) => {
+            x_elm = document.createElement('img');
+            x_elm.src = '/static/icons/' + url;
+            x_elm.alt = url.split('.')[0]
+            x_elm.classList.add("spkr-img")
+            return x_elm
         }
-    ]
 
-    createXVIcon = (url) => {
-        x_elm = document.createElement('img');
-        x_elm.src = '/static/icons/' + url;
-        x_elm.alt = url.split('.')[0]
-        x_elm.classList.add("spkr-img")
-        return x_elm
-    }
-
-    if(isEnglishMode()) {
-        speaker_btn = createSpeakerButton("speaker", false)
-        speaker_btn.onclick = () => current_word && speakWord(current_word.word)
-        word_elm.children[0].append(speaker_btn)
-    } else {
-        for (let i = 0; i < options_elm.length; i++) {
+        if (isEnglishMode()) {
             speaker_btn = createSpeakerButton("speaker", false)
             speaker_btn.onclick = () => {
-                if (current_word && current_word.options.length && !current_word.options[i].is_attempted) {
-                    speakWord(current_word.options[i].word)
+                if(current_word) {
+                    GameState.playClickAudio();
+                    speakWord(current_word.word);
+            }}
+            word_elm.children[0].append(speaker_btn)
+        } else {
+            for (let i = 0; i < options_elm.length; i++) {
+                speaker_btn = createSpeakerButton("speaker", false)
+                speaker_btn.onclick = () => {
+                    if (current_word && current_word.options.length && !current_word.options[i].is_attempted) {
+                        GameState.playClickAudio();
+                        speakWord(current_word.options[i].word);
+                    }
                 }
+                options_elm[i].children[0].append(speaker_btn)
             }
-            options_elm[i].children[0].append(speaker_btn)
         }
-    }
 
-    isOptionsDisplayable = () => {
-        return current_word && !Number(options_elm[0].style.opacity)
-    }
-
-    displayTable = (newword) => {
-        current_word = newword;
-        word_elm.children[1].textContent = newword.word;
-        table_elm.style.opacity = 1
-    }
-
-    displayOptions = () => {
-        current_chosen= null;
-        for (let i = 0; i < options_elm.length; i++) {
-            specific_opt = current_word.options[i]
-            if(specific_opt.is_attempted) {
-                visual = xv_indicators[Number(specific_opt.word == current_word.meaning)]
-                options_elm[i].classList.add(visual.class)
-                options_elm[i].children[2].append(createXVIcon(visual.icon_url))
-            }
-            options_elm[i].children[1].textContent = specific_opt.word;
-            options_elm[i].style.opacity = 1;
-        }
-    }
-
-    rerenderOptions = (newword) => {
-        current_chosen = null;
-        current_word.options = newword.options;
-        displayOptions();
-    }
-
-    matchedWord = () => {
-        current_chosen = null;
-        current_word.options.find(o => o.word == current_word.meaning).is_attempted = true;
-        displayOptions();
-    }
-    
-    onOptionClick = (e) => {
-        new_id = e.id.split("-")[1];
-        if (!current_word.options[new_id].is_attempted) {
+        change_curr_chosen = (new_chosen) => {
             if (current_chosen) options_elm[current_chosen].classList.remove("active")
-            current_chosen = new_id
-            options_elm[current_chosen].classList.add("active")
-            selectOptions(current_word.word, current_word.options[current_chosen].word)
+            if (new_chosen !== null) options_elm[new_chosen].classList.add("active")
+            current_chosen = new_chosen
         }
-    }
 
-    turnoffTable = () => {
-        current_word = null;
-        options_elm.forEach(elm => {
-            elm.style.opacity = 0;
-            xv_children = elm.children[2].children
-            for (let child of xv_children) elm.children[2].removeChild(child)
-        })
-        table_elm.style.opacity = 0;
-    }
+        isOptionsDisplayable = () => {
+            return current_word && !Number(options_elm[0].style.opacity)
+        }
 
-    // displayTable({
-    //     "word": "sunny", "meaning": "\u6674\u6717",
-    //     "options": [{ "word": "\u71e6\u721b", "is_attempted": true }, { "word": "\u6674\u6717", "is_attempted": true }, { "word": "\u5929\u6674", "is_attempted": true }],
-    //     "is_solved": false
-    // })
-    // displayOptions()
-    // // setTimeout(turnoffTable, 2000)
+        displayTable = (newword) => {
+            current_word = newword;
+            if(isEnglishMode()) speakWord(current_word.word);
+            word_elm.children[1].textContent = newword.word;
+            table_elm.style.opacity = 1
+        }
+
+        displayOptions = () => {
+            change_curr_chosen(null);
+            for (let i = 0; i < options_elm.length; i++) {
+                specific_opt = current_word.options[i]
+                if (specific_opt.is_attempted) {
+                    visual = xv_indicators[Number(specific_opt.word == current_word.meaning)];
+                    options_elm[i].classList.add(visual.class);
+                    options_elm[i].children[2].append(createXVIcon(visual.icon_url));
+                    visual.sound.play();
+                }
+                options_elm[i].children[1].textContent = specific_opt.word;
+                options_elm[i].style.opacity = 1;
+            }
+        }
+
+        rerenderOptions = (newword) => {
+            change_curr_chosen(null)
+            current_word.options = newword.options;
+            displayOptions();
+        }
+
+        matchedWord = () => {
+            change_curr_chosen()
+            current_word.options.find(o => o.word == current_word.meaning).is_attempted = true;
+            displayOptions();
+        }
+
+        onOptionClick = (e) => {
+            new_id = e.id.split("-")[1];
+            if (!current_word.options[new_id].is_attempted) {
+                GameState.playClickAudio();
+                change_curr_chosen(new_id)
+                selectOptions(current_word.word, current_word.options[current_chosen].word)
+            }
+        }
+
+        turnoffTable = () => {
+            current_word = null;
+            change_curr_chosen(null)
+            options_elm.forEach(elm => {
+                elm.style.opacity = 0;
+                elm.classList.remove(...xv_indicators.map(i => i.class))
+                xv_children = elm.children[2].children
+                for (let child of xv_children) elm.children[2].removeChild(child)
+            })
+            table_elm.style.opacity = 0;
+        }
+    })
 
 </script>

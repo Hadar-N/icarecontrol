@@ -68,10 +68,13 @@
                     return;
                 }
                 curr_stage--
-            } else if (curr_stage == stages.length - 1) setTimeout(() => form_elm.submit(), 10)
-            else curr_stage++
+            } else if (curr_stage == stages.length - 1) {
+                GameState.playClickAudio()
+                setTimeout(() => form_elm.submit(), 10)
+            } else curr_stage++
 
             if (curr_stage !== temp_curr) {
+                GameState.playClickAudio()
                 apply_stage_styles(temp_curr);
                 apply_stage_styles(curr_stage);
             }

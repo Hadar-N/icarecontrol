@@ -7,6 +7,7 @@ const GameState = (function () {
     let strings = {};
     let curr_mode = null;
     let curr_level = null;
+    let click_audio = new Audio('/static/audio/click.mp3');
 
     return {
         getConsts: () => {
@@ -30,7 +31,8 @@ const GameState = (function () {
         setCurrMode: (str) => curr_mode = str,
         getCurrModeStr: () => curr_mode ? strings["gamestart.html"].mode.options[curr_mode] : null,
         setCurrLevel: (str) => curr_level = str,
-        getCurrLevelStr: () => curr_level ? strings["gamestart.html"].level.options[curr_level] : null
+        getCurrLevelStr: () => curr_level ? strings["gamestart.html"].level.options[curr_level] : null,
+        playClickAudio: () => click_audio.play()
     };
 })();
 

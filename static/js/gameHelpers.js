@@ -54,6 +54,7 @@ function createSpeakerButton(str, add_onclick = true) {
     if(add_onclick) {
         svg.onclick = (e) => {
             e.stopPropagation()
+            GameState.playClickAudio()
             speakWord(str)
         };
     }

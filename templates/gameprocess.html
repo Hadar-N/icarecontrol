@@ -28,13 +28,9 @@
 
         applyInsructions(0)
 
-        const sounds = {
-            success: new Audio('/static/audio/success.mp3'),
-            fail: new Audio('/static/audio/fail.mp3')
-        }
-
         onClickControl = (obj) => {
-            clickControlFunc(obj)
+            GameState.playClickAudio();
+            clickControlFunc(obj);
         }
 
         try {
