@@ -3,8 +3,8 @@
 
 <form id="formelm" method="POST" class="fulldisplay centered">
     {{ form.csrf_token }}
-    <div id="returnbtn" class="ctrl-buttons ctrl-singlebutton" onclick="changeStage('returnbtn')">
-        <img class="ctrl-img" src="/static/icons/return.svg" alt="return" />
+    <div id="returnbtn" class="ctrl-buttons ctrl-singlebutton" onclick="changeStage('homebtn')">
+        <img class="ctrl-img" src="/static/icons/home.svg" alt="home" />
     </div>
 
     {% for stage in form.getStages() %}
@@ -62,12 +62,13 @@
 
         changeStage = (txt) => {
             temp_curr = curr_stage;
-            if (txt == "returnbtn") {
+            if (txt == "homebtn") {
                 if(curr_stage < 1) {
-                    printInPythonTerminal('return clicked when in stage 0!')
+                    printInPythonTerminal('home clicked when in stage 0!')
                     return;
                 }
-                curr_stage--
+                curr_stage = 0
+                // add support for mid level
             } else if (curr_stage == stages.length - 1) {
                 GameState.playClickAudio()
                 setTimeout(() => form_elm.submit(), 10)

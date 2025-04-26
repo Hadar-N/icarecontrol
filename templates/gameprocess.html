@@ -10,24 +10,22 @@
 </div>
 
 <div class="ctrl-buttons">
-    {% for btn in btns %}
-    <input type="radio" name="ctrl-buttons" id="{{btn.value}}" value="{{btn.value}}" />
-    <label for="{{btn.value}}" class="ctrl-singlebutton" command="{{btn.value}}" onclick="onClickControl(this)">
-        <img class="ctrl-img" src="/static/icons/{{btn.value}}.svg" alt="{{btn.value}}" />
+    {% for btn in ["home","return"] %}
+    <input type="radio" name="ctrl-buttons" id="{{btn}}" value="{{btn}}" />
+    <label for="{{btn}}" class="ctrl-singlebutton" id="{{btn}}" onclick="onClickControl(this)">
+        <img class="ctrl-img" src="/static/icons/{{btn}}.svg" alt="{{btn}}" />
     </label>
     {% endfor %}
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-
         for_table_elm = document.getElementById('for-table');
         word_table = new WordTable(for_table_elm);
 
         for_instructions_elm = document.getElementById('for-instructions');
         instructions_line = new InstructionsLine(for_instructions_elm);
 
-        document.getElementById('start').checked = true;
         strings = GameState.getStrings()["gameprocess.html"]
         data_actions = GameState.getConsts().MQTT_DATA_ACTIONS
         active_contours = 0;
@@ -36,7 +34,12 @@
 
         onClickControl = (obj) => {
             GameState.playClickAudio();
-            clickControlFunc(obj);
+            clickControlFunc("stop");
+            GameState.setCurrLevel(0)
+            if (obj.getAttribute("id") == "home") {
+                GameState.setCurrMode(0)
+            }
+            window.location.href = '/game/';
         }
 
         try {
@@ -65,11 +68,12 @@
                 }
             });
             socket.on("contours", data => {
-                if (data.contours > active_contours && word_table.isOptionsDisplayable()) {
+                if (data.contours == 0) {
+                    word_table.turnoffTable();
+                    instructions_line.applyInsructions(0);
+                } else if ((data.contours > active_contours || data.contours >= 2) && word_table.isOptionsDisplayable()) {
                     word_table.displayOptions();
                     instructions_line.applyInsructions(1);
-                } else if (data.contours == 0) {
-                    instructions_line.applyInsructions(0);
                 }
                 active_contours = data.contours
             })

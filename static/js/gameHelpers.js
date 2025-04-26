@@ -10,13 +10,11 @@ function printInPythonTerminal(str) {
     })
 }
 
-function clickControlFunc(elm) {
+function clickControlFunc(command) {
     fetch('/publish_command', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            command: elm.getAttribute("command")
-        })
+        body: JSON.stringify({ command })
     })
         .then(res => res.json())
         .then(data => {

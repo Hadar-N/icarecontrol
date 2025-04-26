@@ -18,7 +18,7 @@ level_data = STRINGS["gamestart.html"]["level"]
 @game_routes.route('/game/', methods=['GET', 'POST'])
 def game_start():
     form = GameStartForm()
-    stage_1_choice = form.mode.data if form.mode.data in mode_data["options"] else ''
+    stage_1_choice = form.mode.data if form.mode.data in mode_data["options"] else data_singleton.mode
 
     if form.validate_on_submit():
         data_singleton.level = form.level.data
@@ -39,7 +39,7 @@ def game_process():
         print('Invalid game properties. Please select mode and level.')
         return redirect(url_for('game.game_start'))
         
-    return pack_render_temp('gameprocess.html', btns=WEB_ACTIONS)
+    return pack_render_temp('gameprocess.html', actions=WEB_ACTIONS)
 
 @game_routes.route('/game/end', methods=['GET'])
 def game_end():

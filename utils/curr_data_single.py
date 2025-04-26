@@ -15,14 +15,14 @@ class CurrDataSingle():
             return
 
         self.__matched_words= []
-        self.__level = None
-        self.__mode = None
+        self.__level = ''
+        self.__mode = ''
         self.__status = GAME_STATUS.HALTED
         self.__initialized = True
 
     def restart_config(self):
-        self.__level = None
-        self.__mode = None
+        self.__level = ''
+        self.__mode = ''
         self.clear_wordlist()
 
     @property

@@ -1,4 +1,5 @@
 const MAX_OPTIONS = 3
+const TIME_AFTER_WORD_INIT = 2000
 const XV_INDICATORS = [
     {
         "class": "attempted",
@@ -15,12 +16,10 @@ const XV_INDICATORS = [
 // GameState and gameHelpers both imported in base.html
 
 class WordTable {
-    #container; #current_word; #current_chosen; #table_elm; #word_elm; #options_elm;
+    #container; #current_word; #current_chosen; #table_elm; #word_elm; #options_elm; #time_of_word_new
 
     constructor(container) {
         this.#container = container;
-        this.#current_word = null;
-        this.#current_chosen = null;
 
         this.#render()
         this.#initElm()
@@ -35,9 +34,9 @@ class WordTable {
                     <span id="word-txt"></span>
                 </th>
             </tr>
-            ${ Array.from({length: MAX_OPTIONS}, (e, i)=> i).map(ix => `
+            ${Array.from({ length: MAX_OPTIONS }, (e, i) => i).map(ix => `
             <tr>
-                <td id="opt-${ix}" class='option${ ix==(MAX_OPTIONS - 1) ? " last-item" : "" }' onclick="onOptionClick(this)">
+                <td id="opt-${ix}" class='option${ix == (MAX_OPTIONS - 1) ? " last-item" : ""}'>
                     <span id="for-speaker"></span>
                     <span id="opt_txt-${ix}" class="option-txt"></span>
                     <span id="for-result-img"></span>
@@ -52,11 +51,21 @@ class WordTable {
         this.#container.innerHTML = this.#htmlTemplate()
     }
 
+    #onOptionClick(e) {
+        let new_id = Number(e.id.split("-")[1]);
+        if (!this.#current_word.options[new_id].is_attempted) {
+            GameState.playClickAudio();
+            this.#changeCurrChosen(new_id)
+            selectOptions(this.#current_word.word, this.#current_word.options[this.#current_chosen].word)
+        }
+    }
+
     #initElm() {
         this.#table_elm = document.getElementById('word-table');
         this.#word_elm = document.getElementById('word-orig');
         this.#options_elm = Array.from(document.getElementsByClassName('option'))
-                            .sort((a, b) => Number(a.id.split('-')[1]) > Number(b.id.split('-')[1]) ? 1 : -1);
+            .sort((a, b) => Number(a.id.split('-')[1]) > Number(b.id.split('-')[1]) ? 1 : -1);
+        this.#options_elm.forEach(elm => elm.addEventListener('click', () => this.#onOptionClick(elm)))
         this.#initSpeakers()
     }
 
@@ -65,10 +74,11 @@ class WordTable {
         if (isEnglishMode()) {
             speaker_btn = createSpeakerButton("speaker", false)
             speaker_btn.onclick = () => {
-                if(this.#current_word) {
+                if (this.#current_word) {
                     GameState.playClickAudio();
                     speakWord(this.#current_word.word);
-            }}
+                }
+            }
             this.#word_elm.children[0].append(speaker_btn)
         } else {
             for (let i = 0; i < this.#options_elm.length; i++) {
@@ -84,13 +94,13 @@ class WordTable {
         }
     }
 
-    #changeCurrChosen = (new_chosen) => {
+    #changeCurrChosen(new_chosen) {
         if (this.#current_chosen) this.#options_elm[this.#current_chosen].classList.remove("active")
         if (Number.isInteger(new_chosen)) this.#options_elm[new_chosen].classList.add("active")
         this.#current_chosen = new_chosen
     }
 
-    #createXVIcon = (url) => {
+    #createXVIcon(url) {
         let x_elm = document.createElement('img');
         x_elm.src = '/static/icons/' + url;
         x_elm.alt = url.split('.')[0]
@@ -98,18 +108,19 @@ class WordTable {
         return x_elm
     }
 
-    isOptionsDisplayable = () => {
-        return this.#current_word && !Number(this.#options_elm[0].style.opacity)
+    isOptionsDisplayable() {
+        return this.#current_word && !Number(this.#options_elm[0].style.opacity) && (Date.now() - this.#time_of_word_new > TIME_AFTER_WORD_INIT)
     }
 
-    displayTable = (newword) => {
+    displayTable(newword) {
         this.#current_word = newword;
-        if(isEnglishMode()) speakWord(this.#current_word.word);
+        this.#time_of_word_new = Date.now()
+        if (isEnglishMode()) speakWord(this.#current_word.word);
         this.#word_elm.children[1].textContent = newword.word;
         this.#table_elm.style.opacity = 1
     }
 
-    displayOptions = () => {
+    displayOptions() {
         this.#changeCurrChosen(null);
         let specific_opt, visual;
         for (let i = 0; i < this.#options_elm.length; i++) {
@@ -125,28 +136,19 @@ class WordTable {
         }
     }
 
-    rerenderOptions = (newword) => {
+    rerenderOptions(newword) {
         this.#changeCurrChosen(null)
         this.#current_word.options = newword.options;
         this.displayOptions();
     }
 
-    matchedWord = () => {
+    matchedWord() {
         this.#changeCurrChosen()
         this.#current_word.options.find(o => o.word == this.#current_word.meaning).is_attempted = true;
         this.displayOptions();
     }
 
-    onOptionClick = (e) => {
-        new_id = e.id.split("-")[1];
-        if (!this.#current_word.options[new_id].is_attempted) {
-            GameState.playClickAudio();
-            this.#changeCurrChosen(new_id)
-            this.selectOptions(this.#current_word.word, this.#current_word.options[this.#current_chosen].word)
-        }
-    }
-
-    turnoffTable = () => {
+    turnoffTable() {
         this.#current_word = null;
         this.#changeCurrChosen(null)
         let xv_children;
