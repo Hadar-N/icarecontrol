@@ -68,7 +68,7 @@
                 }
             });
             socket.on("contours", data => {
-                if (data.contours == 0) {
+                if (data.contours == 0 && !word_table.isActive()) {
                     word_table.turnoffTable();
                     instructions_line.applyInsructions(0);
                 } else if ((data.contours > active_contours || data.contours >= 2) && word_table.isOptionsDisplayable()) {

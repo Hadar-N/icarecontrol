@@ -16,10 +16,11 @@ const XV_INDICATORS = [
 // GameState and gameHelpers both imported in base.html
 
 class WordTable {
-    #container; #current_word; #current_chosen; #table_elm; #word_elm; #options_elm; #time_of_word_new
+    #container; #current_word; #current_chosen; #table_elm; #word_elm; #options_elm; #time_of_word_new; #is_active;
 
     constructor(container) {
         this.#container = container;
+        this.#is_active = false;
 
         this.#render()
         this.#initElm()
@@ -111,9 +112,14 @@ class WordTable {
     isOptionsDisplayable() {
         return this.#current_word && !Number(this.#options_elm[0].style.opacity) && (Date.now() - this.#time_of_word_new > TIME_AFTER_WORD_INIT)
     }
+    
+    isActive() {
+        return this.#is_active;
+    }
 
     displayTable(newword) {
         this.#current_word = newword;
+        this.#is_active = true;
         this.#time_of_word_new = Date.now()
         if (isEnglishMode()) speakWord(this.#current_word.word);
         this.#word_elm.children[1].textContent = newword.word;
@@ -145,10 +151,12 @@ class WordTable {
     matchedWord() {
         this.#changeCurrChosen()
         this.#current_word.options.find(o => o.word == this.#current_word.meaning).is_attempted = true;
+        this.#is_active = false;
         this.displayOptions();
     }
 
     turnoffTable() {
+        this.#is_active = false;
         this.#current_word = null;
         this.#changeCurrChosen(null)
         let xv_children;
