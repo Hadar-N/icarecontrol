@@ -17,11 +17,13 @@ table {
     border-bottom: 3px solid rgb(var(--almost-black));
 }
 
-.spkr-img {
-    height: 40px;
-    width: 40px;
+.mini-img {
+    height: var(--mini-img-size);
+    width: var(--mini-img-size);
     margin: 0 20px;
+    vertical-align: middle;
 }
+
 .attempted .spkr-img, .successful .spkr-img{
     opacity: 0;
 }
@@ -65,8 +67,8 @@ table {
 }
 
 .ctrl-singlebutton img {
-    height: 70px;
-    width: 70px;
+    height: var(--mini-img-size);
+    width: var(--mini-img-size);
     cursor: pointer;
 }
 

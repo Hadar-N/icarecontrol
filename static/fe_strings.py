@@ -34,14 +34,7 @@ STRINGS = {
             "choose_again": "請再選一次答案。",
             "success": "好棒喔！答對了！",
             "cover": "請把沙覆蓋回去。"
-        },
-        "instructions_by_stage": [
-            ["dig_1", "dig_2"],
-            ["choose_and_match"],
-            ["wrong", "choose_again"],
-            ["success", "cover"],
-            ["cover"]
-        ]
+        }
     },
     "gameend.html": {
         "congrats": "congratulations!",

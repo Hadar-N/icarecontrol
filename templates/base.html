@@ -3,8 +3,13 @@
 <head>
     <title>iCare Control</title>
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
+
     <script src="{{ url_for('static', filename='js/gameHelpers.js') }}"></script>
     <script src="{{ url_for('static', filename='js/gameState.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/components/WordTable.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components/InstructionsLine.js') }}"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
     <script>
         try {

@@ -49,6 +49,7 @@ function createSpeakerButton(str, add_onclick = true) {
     const svg = document.createElement('img');
     svg.src = "/static/icons/speaker.svg";
     svg.alt = "speaker";
+    svg.classList.add('mini-img')
     svg.classList.add('spkr-img')
     svg.id = `sp-${str}`
     if(add_onclick) {

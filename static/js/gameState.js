@@ -32,7 +32,13 @@ const GameState = (function () {
         getCurrModeStr: () => curr_mode ? strings["gamestart.html"].mode.options[curr_mode] : null,
         setCurrLevel: (str) => curr_level = str,
         getCurrLevelStr: () => curr_level ? strings["gamestart.html"].level.options[curr_level] : null,
-        playClickAudio: () => click_audio.play()
+        playClickAudio: () => {
+            try {
+                click_audio.play()
+            } catch(err) {
+                console.error("play error!", err)
+            }
+        }
     };
 })();
 

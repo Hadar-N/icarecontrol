@@ -3,9 +3,9 @@
 
 <div class="fulldisplay centered center-top">
 
-    {% include 'components/word_table.html' %}
+    <div id="for-table"></div>
 
-    {% include 'components/instructions_field.html' %}
+    <div id="for-instructions"></div>
 
 </div>
 
@@ -21,12 +21,18 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
 
+        for_table_elm = document.getElementById('for-table');
+        word_table = new WordTable(for_table_elm);
+
+        for_instructions_elm = document.getElementById('for-instructions');
+        instructions_line = new InstructionsLine(for_instructions_elm);
+
         document.getElementById('start').checked = true;
         strings = GameState.getStrings()["gameprocess.html"]
         data_actions = GameState.getConsts().MQTT_DATA_ACTIONS
         active_contours = 0;
 
-        applyInsructions(0)
+        instructions_line.applyInsructions(0)
 
         onClickControl = (obj) => {
             GameState.playClickAudio();
@@ -37,33 +43,33 @@
             socket.on('word', data => {
                 switch (data.type) {
                     case data_actions.NEW:
-                        displayTable(data.word); // TODO : what happend if 2 contours at once?
+                        word_table.displayTable(data.word); // TODO : what happend if 2 contours at once?
                         break;
                     case data_actions.REMOVE:
-                        turnoffTable();
-                        applyInsructions(4);
+                        word_table.turnoffTable();
+                        instructions_line.applyInsructions(4);
                         break;
                     case data_actions.STATUS:
-                        rerenderOptions(data.word);
-                        applyInsructions(2);
+                        word_table.rerenderOptions(data.word);
+                        instructions_line.applyInsructions(2);
                         break;
                     case data_actions.MATCHED:
-                        matchedWord();
-                        applyInsructions(3);
+                        word_table.matchedWord();
+                        instructions_line.applyInsructions(3);
                         break;
                     case data_actions.SELECT_FAIL:
                         speakWord(strings.instructions.dig_2)
                         break;
                     default:
-                        printInPythonTerminal('action type unaccepted:'+ data.type)
+                        printInPythonTerminal('action type unaccepted:' + data.type)
                 }
             });
             socket.on("contours", data => {
-                if (data.contours > active_contours && isOptionsDisplayable()) {
-                    displayOptions();
-                    applyInsructions(1);
+                if (data.contours > active_contours && word_table.isOptionsDisplayable()) {
+                    word_table.displayOptions();
+                    instructions_line.applyInsructions(1);
                 } else if (data.contours == 0) {
-                    applyInsructions(0);
+                    instructions_line.applyInsructions(0);
                 }
                 active_contours = data.contours
             })
