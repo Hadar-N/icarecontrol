@@ -7,6 +7,7 @@ LOGFILE= "running.log"
 VOWEL_LIKE_SOUNDS = 'aeiouy'
 FIND_SYLLABLES_PATTERN = fr"(?:^|\s|[^{VOWEL_LIKE_SOUNDS}])[{VOWEL_LIKE_SOUNDS}]+(?=[^{VOWEL_LIKE_SOUNDS}]|$|\s)"
 SYLLABLES_PER_SECOND_WAIT = 5
+AUDIO_FILE_DETECTOR = r"\.mp3$"
 
 # mqtt consts
 class WEB_ACTIONS(str, Enum):

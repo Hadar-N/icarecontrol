@@ -3,7 +3,6 @@
 
 <div class="fulldisplay centered">
 
-    <div id="end-title" class="cap-text" style="font-weight: 800;"></div>
     <div class="listed">
         <ul id="message-list" class="message-list">
             {% for m in matched %}
@@ -24,13 +23,9 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        is_done = '{{ status }}' === GameState.getConsts().GAME_STATUS.DONE;
         strings = GameState.getStrings()["gameend.html"]
-        if (is_done) {
-            new Audio('/static/audio/win.mp3').play()
-            document.getElementById("end-title").textContent = strings.congrats
-        }
-
+        new Audio('/static/audio/win.mp3').play()
+        
         document.getElementById("submit").textContent = strings.submit_btn
 
         const scrollable_list = document.getElementsByClassName('listed')[0];

@@ -6,7 +6,8 @@ import queue
 import re
 from dotenv import load_dotenv
 
-from static.consts import FIND_SYLLABLES_PATTERN, SYLLABLES_PER_SECOND_WAIT
+from .curr_data_single import CurrDataSingle
+from static.consts import FIND_SYLLABLES_PATTERN, SYLLABLES_PER_SECOND_WAIT, AUDIO_FILE_DETECTOR
 
 class SpeechSingle:
     _instance = None
@@ -25,6 +26,7 @@ class SpeechSingle:
 
         load_dotenv(verbose=True, override=True)
         self.__ispi = os.getenv("ENV") == "pi"
+        self.__global_Data = CurrDataSingle()
 
         self.__queue = queue.Queue()
         self.__stop_event = threading.Event()
@@ -38,22 +40,33 @@ class SpeechSingle:
         matches = re.findall(FIND_SYLLABLES_PATTERN, txt, re.IGNORECASE)
         return len(matches)
 
+    def __subprocess_play_file(self, path):
+        try:
+            subprocess.run(["mpg123", path],
+                           stdout= subprocess.DEVNULL)
+        except Exception as e:
+            self.__global_Data.logger.error(f'SpeechSingle File {path} play error: {e}')
+
     def __subprocess_speak(self, txt):
         is_english = txt.isascii()
         sleep_len = (self.__count_syllables(txt) if is_english else len(txt))/SYLLABLES_PER_SECOND_WAIT
-
-        subprocess.run(["espeak-ng",
-                        "-v", 'en-gb' if is_english else 'cmn-latn-pinyin',
-                        "-s", str(150),
-                        txt])
-        time.sleep(sleep_len)
+        try:
+            subprocess.run(["espeak-ng",
+                            "-v", 'en-gb' if is_english else 'cmn-latn-pinyin',
+                            "-s", str(150),
+                            txt])
+            time.sleep(sleep_len)
+        except Exception as e:
+            self.__global_Data.logger.error(f'SpeechSingle speak "{txt}" error: {e}')
 
     def __process_queue_loop(self):
         while not self.__stop_event.is_set():
             try:
                 txt = self.__queue.get(timeout=0.1)
                 if self.__ispi:
-                    self.__subprocess_speak(txt)
+                    if re.search(AUDIO_FILE_DETECTOR, txt):
+                        self.__subprocess_play_file(txt)
+                    else: self.__subprocess_speak(txt)
                 self.__queue.task_done()
             except queue.Empty:
                 continue

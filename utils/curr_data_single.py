@@ -18,6 +18,7 @@ class CurrDataSingle():
         self.__level = ''
         self.__mode = ''
         self.__status = GAME_STATUS.HALTED
+        self.__logger = None
         self.__initialized = True
 
     def restart_config(self):
@@ -62,3 +63,12 @@ class CurrDataSingle():
     def status(self, stat: str):
         if self.__setproperty(stat, "status", GAME_STATUS, False):
             self.__status = stat
+
+
+    @property
+    def logger(self):
+        return self.__logger
+    
+    @logger.setter
+    def logger(self, logger):
+        self.__logger = logger

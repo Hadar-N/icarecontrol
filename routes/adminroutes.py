@@ -13,8 +13,8 @@ from utils.speech_single import SpeechSingle
 admin_routes = Blueprint('adm', __name__)
 
 conn_manager = ConnectionManager.get_instance()
-speech_singleton = SpeechSingle()
 data_singleton = CurrDataSingle()
+speech_singleton = SpeechSingle()
 
 @admin_routes.route('/speak', methods=['POST'])
 def speak():
@@ -25,6 +25,7 @@ def speak():
 @admin_routes.route('/print_to_terminal', methods=['POST'])
 def print_to_terminal():
     data = request.json.get('body')
+    data_singleton.logger.info(f'/print_to_terminal: {str(data)}')
     print("print_to_terminal: ", data)
     return json.dumps(asdict(SUCCESS_RES(status=200, success= True)))
 

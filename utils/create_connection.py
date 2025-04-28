@@ -14,10 +14,12 @@ def close_connection():
 
 def create_connection(socketio : SocketIO) -> ConnectionManager:
     logging.basicConfig(filename=LOGFILE)
+    logging.getLogger('werkzeug').setLevel(logging.WARNING)
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
     load_dotenv(verbose=True, override=True)
     datasingle = CurrDataSingle()
+    datasingle.logger = logger
 
     init_data = MQTTInitialData(
             host = os.getenv("HOST"),
@@ -29,7 +31,7 @@ def create_connection(socketio : SocketIO) -> ConnectionManager:
     def on_message(conn, topic, data):
             if topic == Topics.STATE:
                 future_page = body = None
-                if data["state"] in [GAME_STATUS.DONE.value, GAME_STATUS.STOPPED.value]:
+                if data["state"] in [GAME_STATUS.DONE.value]:
                     future_page = '/game/end'
                 if data["state"] in [GAME_STATUS.ACTIVE.value, GAME_STATUS.HALTED.value]:
                     future_page = '/game/process'

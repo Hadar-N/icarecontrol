@@ -5,6 +5,7 @@ venv/*
 oldies/*
 tests/*
 
+static/recordings/*
 static/fonts/DFT_K90.ttf
 static/fonts/DFT_K91.ttf
 

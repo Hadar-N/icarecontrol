@@ -1,17 +1,20 @@
 const INSTRUCTIONS_BY_STAGE = [
-    {"recording": null, written_ref: ["dig_1", "dig_2"]},
-    {"recording": null, written_ref: ["choose_and_match"]},
-    {"recording": null, written_ref: ["wrong", "choose_again"]},
-    {"recording": null, written_ref: ["success", "cover"]},
-    {"recording": null, written_ref: ["cover"]}
+    { written_ref: ["dig_1", "dig_2"] },
+    { written_ref: ["choose_and_match"] },
+    { written_ref: ["wrong", "choose_again"] },
+    { written_ref: ["success", "cover"] },
+    { written_ref: ["cover"] }
 ]
 
 class InstructionsLine {
-    #container; #instruction_stage; #instructions_elm; #strings;
+    #container; #instruction_stage; #instructions_elm; #audio_elms; #strings;
 
     constructor(container) {
         this.#container = container;
         this.#strings = GameState.getStrings()["gameprocess.html"].instructions;
+        this.#audio_elms = INSTRUCTIONS_BY_STAGE.map(i => {
+            return i.written_ref.map(j => `static/recordings/${j}.mp3`)
+        });
 
         this.#parentRender();
         this.#initElm();
@@ -31,10 +34,7 @@ class InstructionsLine {
     }
 
     #playRecording() {
-        let rec = INSTRUCTIONS_BY_STAGE[this.#instruction_stage].recording;
-        if (rec) {
-            rec.play();
-        }
+        this.#audio_elms[this.#instruction_stage].forEach(i => speakWord(i))
     }
 
     getInstruction_stage() {
@@ -42,10 +42,11 @@ class InstructionsLine {
     }
 
     applyInsructions(num) {
-        this.#instruction_stage = num;
-        console.log(this.#instruction_stage, this.#instructions_elm, this.#getFieldStr())
-        this.#instructions_elm.innerHTML = this.#getFieldStr();
-        this.#playRecording();
+        if (num !== this.#instruction_stage) {
+            this.#instruction_stage = num;
+            this.#instructions_elm.innerHTML = this.#getFieldStr();
+            this.#playRecording();
+        }
     }
 
 }
