@@ -29,9 +29,15 @@ const GameState = (function () {
             strings = parseFromFlaskJson(str)
         },
         setCurrMode: (str) => curr_mode = str,
-        getCurrModeStr: () => curr_mode ? strings["gamestart.html"].mode.options[curr_mode] : null,
+        getCurrModeStr: (is_origin = false) => {
+            if (is_origin) return curr_mode
+            return curr_mode ? strings["gamestart.html"].mode.options[curr_mode] : null
+        },
         setCurrLevel: (str) => curr_level = str,
-        getCurrLevelStr: () => curr_level ? strings["gamestart.html"].level.options[curr_level] : null,
+        getCurrLevelStr: (is_origin = false) => {
+            if (is_origin) return curr_level
+            return curr_level ? strings["gamestart.html"].level.options[curr_level] : null
+        },
         playClickAudio: () => {
             try {
                 click_audio.play()

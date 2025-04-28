@@ -43,6 +43,17 @@ function selectOptions(word, opt) {
     })
 }
 
+function startGame(mode, level) {
+    fetch('/start_game', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            mode,
+            level
+        })
+    })
+}
+
 function createSpeakerButton(str, add_onclick = true) {
     const svg = document.createElement('img');
     svg.src = "/static/icons/speaker.svg";

@@ -20,7 +20,7 @@
 
     function clickReturnFunc(elm) {
         GameState.playClickAudio();
-        window.location.href = '/game/';
+        startGame(GameState.getCurrModeStr(true), GameState.getCurrLevelStr(true))
     }
 
     document.addEventListener('DOMContentLoaded', function () {

@@ -15,7 +15,7 @@
     cursor: pointer;
     padding: var(--spacing-unit);
     margin: 10px;
-    border: 3px solid rgba(var(--brown-dark-shade), 0.8);
+    border: 3px solid rgba(var(--almost-black), 0.8);
     border-radius: 5px;
 }
 
@@ -23,7 +23,8 @@
     display: none;
 }
 .bigradio input[type="radio"]:checked + .singleradioitem {
-    background-color: rgba(var(--brown-light-shade), 0.3);
+    background-color: rgba(var(--red-bg-shade), 0.3
+    );
 }
 .singleradioitem img {
     height: 50px;

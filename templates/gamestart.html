@@ -16,12 +16,7 @@
                 {% for subfield in field %}
                     {{ subfield }}
                     <label for="{{subfield.id}}" class="singleradioitem" onclick="changeStage('{{stage.name}}')">
-                        {% if stage.img_support %}
-                            <img src="{{ url_for('static', filename='icons/' + subfield.data + '.svg') }}"
-                                alt="{{ subfield.label.text }}" />
-                            <br />
-                        {% endif %}
-                        <span>{{ subfield.label }}</span>
+                        {{ subfield.label }}
                     </label>
                 {% endfor %}
             </div>

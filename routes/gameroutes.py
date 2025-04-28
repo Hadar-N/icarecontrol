@@ -1,6 +1,8 @@
 import json
 from flask import render_template, redirect, url_for, Blueprint, request, after_this_request
 
+from .adminroutes import start_game
+
 from static.consts import WEB_ACTIONS, FE_CONSTS
 from static.fe_strings import STRINGS
 from utils.forms import GameStartForm
@@ -21,11 +23,7 @@ def game_start():
     stage_1_choice = form.mode.data if form.mode.data in mode_data["options"] else data_singleton.mode
 
     if form.validate_on_submit():
-        data_singleton.level = form.level.data
-        data_singleton.mode = stage_1_choice
-        conn_manager.publish_message(Topics.CONTROL, {"command": MQTT_COMMANDS.START, "level": form.level.data, "mode": stage_1_choice})
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return json.dumps({'success': True})
+        start_game(stage_1_choice, form.level.data)
     
     return pack_render_temp('gamestart.html', form=form, stage_1_choice=stage_1_choice)
 

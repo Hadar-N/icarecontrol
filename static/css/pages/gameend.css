@@ -24,28 +24,10 @@
     justify-content: space-between;
     align-items: center;
 }
-.message-list .matched {
-    color: rgba(var(--brown-dark-shade), 0.85);
-    border: 1px solid rgba(var(--brown-dark-shade), 0.85);
-}
 
 .message-list .main-part{
     display: flex;
     align-items: baseline;
-}
-.message-list .choose-option-btn {
-    font-size: .35em;
-    font-weight: 200;
-    color:rgba(var(--brown-dark-shade), 1);
-    background-color: bisque;
-    border: 1.5px solid;
-    border-radius: 15px;
-    margin-left: 15px;
-    padding: 0 10px;
-    cursor: pointer;
-}
-.message-list .matched .choose-option-btn{
-    display: none;
 }
 
 .message-list .matched img {

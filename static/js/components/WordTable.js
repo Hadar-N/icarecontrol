@@ -96,7 +96,7 @@ class WordTable {
     }
 
     #changeCurrChosen(new_chosen) {
-        if (this.#current_chosen) this.#options_elm[this.#current_chosen].classList.remove("active")
+        if (Number.isInteger(this.#current_chosen)) this.#options_elm[this.#current_chosen].classList.remove("active")
         if (Number.isInteger(new_chosen)) this.#options_elm[new_chosen].classList.add("active")
         this.#current_chosen = new_chosen
     }
@@ -156,9 +156,9 @@ class WordTable {
     }
 
     turnoffTable() {
+        this.#changeCurrChosen(null)
         this.#is_active = false;
         this.#current_word = null;
-        this.#changeCurrChosen(null)
         let xv_children;
         this.#options_elm.forEach(elm => {
             elm.style.opacity = 0;

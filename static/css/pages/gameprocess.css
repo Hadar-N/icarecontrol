@@ -44,7 +44,7 @@ table {
     border: none;
 }  
 .active {
-    background-color: rgba(var(--brown-dark-shade), 0.3);
+    background-color: rgba(var(--red-bg-shade), 0.3);
 }
 .attempted {
     color: beige;

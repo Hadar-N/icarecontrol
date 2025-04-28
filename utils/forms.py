@@ -32,12 +32,10 @@ class GameStartForm(FlaskForm):
         {
             "type": "radio",
             "name": "mode",
-            "reference": self.mode,
-            "img_support": 0
+            "reference": self.mode
         },
         {
             "type": "radio",
             "name": "level",
-            "reference": self.level,
-            "img_support": 1
+            "reference": self.level
         }]

@@ -1,5 +1,6 @@
 from enum import Enum
 from game_shared import GAME_STATUS, MQTT_COMMANDS, MQTT_DATA_ACTIONS
+from dataclasses import dataclass
 
 LOGFILE= "running.log"
 
@@ -17,3 +18,8 @@ FE_CONSTS = {
     "MQTT_DATA_ACTIONS": {i.name: i.value for i in MQTT_DATA_ACTIONS},
     "GAME_STATUS": {i.name: i.value for i in GAME_STATUS}
 }
+
+@dataclass
+class SUCCESS_RES: 
+  status: int
+  success: bool
