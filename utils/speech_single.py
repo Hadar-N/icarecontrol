@@ -30,6 +30,7 @@ class SpeechSingle:
 
         self.__queue = queue.Queue()
         self.__stop_event = threading.Event()
+        self.__latest_recording = None
 
         self.__thread = threading.Thread(target=self.__process_queue_loop, daemon=True)
         self.__thread.start()
@@ -65,10 +66,13 @@ class SpeechSingle:
                 txt = self.__queue.get(timeout=0.1)
                 if self.__ispi:
                     if re.search(AUDIO_FILE_DETECTOR, txt):
-                        self.__subprocess_play_file(txt)
+                        self.__latest_recording = txt
                     else: self.__subprocess_speak(txt)
                 self.__queue.task_done()
             except queue.Empty:
+                if self.__latest_recording:
+                    self.__subprocess_play_file(self.__latest_recording)
+                    self.__latest_recording = None
                 continue
 
     def speak(self, txt):
