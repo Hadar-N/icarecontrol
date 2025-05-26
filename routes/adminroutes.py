@@ -1,4 +1,5 @@
 import time
+import re
 import json
 from flask import request, session, Blueprint
 from dataclasses import asdict
@@ -6,7 +7,7 @@ from dataclasses import asdict
 from mqtt_shared import ConnectionManager, Topics
 from game_shared import GAME_LEVELS, GAME_MODES, MQTT_COMMANDS
 
-from static.consts import SUCCESS_RES
+from static.consts import SUCCESS_RES, ARRAY_STR_DETECTOR
 from utils.curr_data_single import CurrDataSingle
 from utils.speech_single import SpeechSingle
 
@@ -19,6 +20,8 @@ speech_singleton = SpeechSingle()
 @admin_routes.route('/speak', methods=['POST'])
 def speak():
     word = request.json.get('word')
+    if isinstance(word, str) and re.search(ARRAY_STR_DETECTOR, word):
+        word = json.loads(word)
     speech_singleton.speak(word)
     return json.dumps(asdict(SUCCESS_RES(status=200, success= True)))
 

@@ -3,7 +3,8 @@ const INSTRUCTIONS_BY_STAGE = [
     { written_ref: ["choose_and_match"] },
     { written_ref: ["wrong", "choose_again"] },
     { written_ref: ["success", "cover"] },
-    { written_ref: ["cover"] }
+    { written_ref: ["cover"] },
+    { written_ref: ["dig_2"] },
 ]
 
 class InstructionsLine {
@@ -34,7 +35,7 @@ class InstructionsLine {
     }
 
     #playRecording() {
-        this.#audio_elms[this.#instruction_stage].forEach(i => speakWord(i))
+        speakWord(this.#audio_elms[this.#instruction_stage])
     }
 
     getInstruction_stage() {
