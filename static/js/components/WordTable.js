@@ -16,11 +16,12 @@ const XV_INDICATORS = [
 // GameState and gameHelpers both imported in base.html
 
 class WordTable {
-    #container; #current_word; #current_chosen; #table_elm; #word_elm; #options_elm; #time_of_word_new; #is_active;
+    #container; #current_word; #current_chosen; #table_elm; #word_elm; #options_elm; #time_of_word_new; #is_active; #flow_stages;
 
     constructor(container) {
         this.#container = container;
         this.#is_active = false;
+        this.#flow_stages = GameState.getConsts().FLOW_STAGES
 
         this.#render()
         this.#initElm()
@@ -117,7 +118,7 @@ class WordTable {
         return this.#is_active;
     }
 
-    displayTable(newword) {
+    #displayTableNoOptions(newword) {
         this.#current_word = newword;
         this.#is_active = true;
         this.#time_of_word_new = Date.now()
@@ -126,7 +127,7 @@ class WordTable {
         this.#table_elm.style.opacity = 1
     }
 
-    displayOptions() {
+    #displayOptions(isNew = false) {
         this.#changeCurrChosen(null);
         let specific_opt, visual;
         for (let i = 0; i < this.#options_elm.length; i++) {
@@ -135,27 +136,27 @@ class WordTable {
                 visual = XV_INDICATORS[Number(specific_opt.word == this.#current_word.meaning)];
                 this.#options_elm[i].classList.add(visual.class);
                 this.#options_elm[i].children[2].append(this.#createXVIcon(visual.icon_url));
-                visual.sound.play();
+                if (!isNew) visual.sound.play();
             }
             this.#options_elm[i].children[1].textContent = specific_opt.word;
             this.#options_elm[i].style.opacity = 1;
         }
     }
 
-    rerenderOptions(newword) {
+    #rerenderOptions(newword) {
         this.#changeCurrChosen(null)
         this.#current_word.options = newword.options;
-        this.displayOptions();
+        this.#displayOptions();
     }
 
-    matchedWord() {
+    #matchedWord() {
         this.#changeCurrChosen()
         this.#current_word.options.find(o => o.word == this.#current_word.meaning).is_attempted = true;
         this.#is_active = false;
-        this.displayOptions();
+        this.#displayOptions();
     }
 
-    turnoffTable() {
+    #turnoffTable() {
         this.#changeCurrChosen(null)
         this.#is_active = false;
         this.#current_word = null;
@@ -167,5 +168,28 @@ class WordTable {
             for (let child of xv_children) elm.children[2].removeChild(child)
         })
         this.#table_elm.style.opacity = 0;
+    }
+
+    RenderByStage(stage, word) {
+        switch(stage){
+            case this.#flow_stages.INITIAL:
+            case this.#flow_stages.NEED_REFRESH:
+                this.#turnoffTable();
+                break;
+            case this.#flow_stages.NEW_EN_WORD:
+                this.#displayTableNoOptions(word)
+                break;
+            case this.#flow_stages.BOTH_CONTOURS_READY:
+                this.#displayOptions(true)
+                break;
+            case this.#flow_stages.WRONG_MATCH:
+                this.#rerenderOptions(word)
+                break;
+            case this.#flow_stages.SUCCESSFUL_MATCH:
+                this.#matchedWord()
+                break;
+            default:
+                printInPythonTerminal('RenderByStage unsupported stage:', stage)
+        }
     }
 }

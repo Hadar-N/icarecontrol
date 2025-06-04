@@ -1,19 +1,20 @@
-const INSTRUCTIONS_BY_STAGE = [
-    { written_ref: ["dig_1", "dig_2"] },
-    { written_ref: ["choose_and_match"] },
-    { written_ref: ["wrong", "choose_again"] },
-    { written_ref: ["success", "cover"] },
-    { written_ref: ["cover"] }
-]
-
 class InstructionsLine {
-    #container; #instruction_stage; #instructions_elm; #audio_elms; #strings;
-
+    #container; #instruction_stage; #instructions_elm; #audio_elms; #strings; #flow_stage_to_instruction;
+    
     constructor(container) {
         this.#container = container;
         this.#strings = GameState.getStrings()["gameprocess.html"].instructions;
-        this.#audio_elms = INSTRUCTIONS_BY_STAGE.map(i => {
-            return i.written_ref.map(j => `static/recordings/${j}.mp3`)
+        let flow_stages = GameState.getConsts().FLOW_STAGES
+        this.#flow_stage_to_instruction = {
+            [flow_stages.INITIAL]: ["dig_1"],
+            [flow_stages.NEW_EN_WORD]: ["dig_2"],
+            [flow_stages.BOTH_CONTOURS_READY]: ["choose_and_match"],
+            [flow_stages.WRONG_MATCH]: ["wrong", "choose_again"],
+            [flow_stages.SUCCESSFUL_MATCH]: ["success", "cover"],
+            [flow_stages.NEED_REFRESH]: ["cover"]
+        }
+        this.#audio_elms = Object.values(this.#flow_stage_to_instruction).map(i => {
+            return i.map(j => `static/recordings/${j}.mp3`)
         });
 
         this.#parentRender();
@@ -30,7 +31,7 @@ class InstructionsLine {
     }
 
     #getFieldStr() {
-        return this.#strings.symbol + ' ' + INSTRUCTIONS_BY_STAGE[this.#instruction_stage].written_ref.map(k => this.#strings[k]).join('<br/>');
+        return this.#strings.symbol + ' ' + this.#flow_stage_to_instruction[this.#instruction_stage].map(k => this.#strings[k]).join('<br/>');
     }
 
     #playRecording() {
@@ -41,9 +42,9 @@ class InstructionsLine {
         return this.#instruction_stage;
     }
 
-    applyInsructions(num) {
-        if (num !== this.#instruction_stage) {
-            this.#instruction_stage = num;
+    applyInsructions(stage) {
+        if (stage !== this.#instruction_stage && this.#flow_stage_to_instruction[stage]) {
+            this.#instruction_stage = stage;
             this.#instructions_elm.innerHTML = this.#getFieldStr();
             this.#playRecording();
         }

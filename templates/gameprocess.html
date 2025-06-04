@@ -28,6 +28,8 @@
 
         strings = GameState.getStrings()["gameprocess.html"]
         data_actions = GameState.getConsts().MQTT_DATA_ACTIONS
+        flow_stages = GameState.getConsts().FLOW_STAGES
+        data_actions_to_flow_stage = GameState.getConsts().MQTT_DATA_ACTION_TO_FLOW_STAGE
         active_contours = 0;
 
         onClickControl = (obj) => {
@@ -40,38 +42,22 @@
             window.location.href = '/game/';
         }
 
+        applyStage = (stage, word = null) => {
+            word_table.RenderByStage(stage, word)
+            instructions_line.applyInsructions(stage)
+        }
+
         try {
             socket.on('word', data => {
-                switch (data.type) {
-                    case data_actions.NEW:
-                        word_table.displayTable(data.word); // TODO : what happend if 2 contours at once?
-                        break;
-                    case data_actions.REMOVE:
-                        word_table.turnoffTable();
-                        instructions_line.applyInsructions(4);
-                        break;
-                    case data_actions.STATUS:
-                        word_table.rerenderOptions(data.word);
-                        instructions_line.applyInsructions(2);
-                        break;
-                    case data_actions.MATCHED:
-                        word_table.matchedWord();
-                        instructions_line.applyInsructions(3);
-                        break;
-                    case data_actions.SELECT_FAIL:
-                        speakWord(strings.instructions.dig_2)
-                        break;
-                    default:
-                        printInPythonTerminal('action type unaccepted:' + data.type)
-                }
+                future_flowstage = data_actions_to_flow_stage[data.type]
+                if (Number.isInteger(future_flowstage)) applyStage(future_flowstage, data.word)
+                else if (data.type == data_actions.SELECT_FAIL) speakWord(strings.instructions.dig_2)
+                else printInPythonTerminal('action type unaccepted:' + data.type)
             });
             socket.on("contours", data => {
-                if (data.contours == 0 && !word_table.isActive()) {
-                    word_table.turnoffTable();
-                    instructions_line.applyInsructions(0);
-                } else if ((data.contours > active_contours || data.contours >= 2) && word_table.isOptionsDisplayable()) {
-                    word_table.displayOptions();
-                    instructions_line.applyInsructions(1);
+                if (data.contours == 0 && !word_table.isActive()) applyStage(flow_stages.INITIAL)
+                else if ((data.contours > active_contours || data.contours >= 2) && word_table.isOptionsDisplayable()) {
+                    applyStage(flow_stages.BOTH_CONTOURS_READY)
                 }
                 active_contours = data.contours
             })

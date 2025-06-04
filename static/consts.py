@@ -1,5 +1,5 @@
 from enum import Enum
-from game_shared import GAME_STATUS, MQTT_COMMANDS, MQTT_DATA_ACTIONS
+from game_shared import GAME_STATUS, MQTT_DATA_ACTIONS
 from dataclasses import dataclass
 
 LOGFILE= "running.log"
@@ -9,6 +9,22 @@ FIND_SYLLABLES_PATTERN = fr"(?:^|\s|[^{VOWEL_LIKE_SOUNDS}])[{VOWEL_LIKE_SOUNDS}]
 SYLLABLES_PER_SECOND_WAIT = 5
 AUDIO_FILE_DETECTOR = r"\.mp3$"
 
+class FLOW_STAGES(Enum):
+   INITIAL = 0
+   NEW_EN_WORD = 1
+   BOTH_CONTOURS_READY = 2
+   SELECTED_ZH = 3
+   WRONG_MATCH = 4
+   SUCCESSFUL_MATCH = 5
+   NEED_REFRESH = 6
+
+MQTT_DATA_ACTION_TO_FLOW_STAGE = {
+  MQTT_DATA_ACTIONS.NEW.value: FLOW_STAGES.NEW_EN_WORD.value,
+  MQTT_DATA_ACTIONS.REMOVE.value: FLOW_STAGES.NEED_REFRESH.value,
+  MQTT_DATA_ACTIONS.STATUS.value: FLOW_STAGES.WRONG_MATCH.value,
+  MQTT_DATA_ACTIONS.MATCHED.value: FLOW_STAGES.SUCCESSFUL_MATCH.value
+}
+
 # mqtt consts
 class WEB_ACTIONS(str, Enum):
     START = MQTT_COMMANDS.START.value
@@ -17,7 +33,9 @@ class WEB_ACTIONS(str, Enum):
 
 FE_CONSTS = {
     "MQTT_DATA_ACTIONS": {i.name: i.value for i in MQTT_DATA_ACTIONS},
-    "GAME_STATUS": {i.name: i.value for i in GAME_STATUS}
+    "GAME_STATUS": {i.name: i.value for i in GAME_STATUS},
+    "FLOW_STAGES": {i.name: i.value for i in FLOW_STAGES},
+    "MQTT_DATA_ACTION_TO_FLOW_STAGE" : MQTT_DATA_ACTION_TO_FLOW_STAGE
 }
 
 @dataclass
