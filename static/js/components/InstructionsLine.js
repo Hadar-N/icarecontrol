@@ -35,7 +35,7 @@ class InstructionsLine {
     }
 
     #playRecording() {
-        this.#audio_elms[this.#instruction_stage].forEach(i => speakWord(i))
+        speakWord(this.#audio_elms[this.#instruction_stage])
     }
 
     getInstruction_stage() {

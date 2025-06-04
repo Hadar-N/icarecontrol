@@ -30,6 +30,7 @@ class SpeechSingle:
 
         self.__queue = queue.Queue()
         self.__stop_event = threading.Event()
+        self.__latest_recording = None
 
         self.__thread = threading.Thread(target=self.__process_queue_loop, daemon=True)
         self.__thread.start()
@@ -39,6 +40,12 @@ class SpeechSingle:
     def __count_syllables(self, txt:str) -> int:
         matches = re.findall(FIND_SYLLABLES_PATTERN, txt, re.IGNORECASE)
         return len(matches)
+    
+    def __is_audio_file(self, word) -> bool:
+        totest= word
+        if isinstance(word, list):
+            totest = word[0]
+        return bool(re.search(AUDIO_FILE_DETECTOR, totest))
 
     def __subprocess_play_file(self, path):
         try:
@@ -59,16 +66,25 @@ class SpeechSingle:
         except Exception as e:
             self.__global_Data.logger.error(f'SpeechSingle speak "{txt}" error: {e}')
 
+    def __play_per_type(self, func: callable, txt: str | list) :
+        if isinstance(txt, str):
+            func(txt)
+        else:
+            [func(t) for t in txt]
+
     def __process_queue_loop(self):
         while not self.__stop_event.is_set():
             try:
                 txt = self.__queue.get(timeout=0.1)
                 if self.__ispi:
-                    if re.search(AUDIO_FILE_DETECTOR, txt):
-                        self.__subprocess_play_file(txt)
-                    else: self.__subprocess_speak(txt)
+                    if self.__is_audio_file(txt):
+                        self.__latest_recording = txt
+                    else: self.__play_per_type(self.__subprocess_speak, txt)
                 self.__queue.task_done()
             except queue.Empty:
+                if self.__latest_recording:
+                    self.__play_per_type(self.__subprocess_play_file, self.__latest_recording)
+                    self.__latest_recording = None
                 continue
 
     def speak(self, txt):
