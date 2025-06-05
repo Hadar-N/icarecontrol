@@ -33,8 +33,10 @@ def create_connection(socketio : SocketIO) -> ConnectionManager:
                 future_page = body = None
                 if data["state"] in [GAME_STATUS.DONE.value]:
                     future_page = '/game/end'
-                if data["state"] in [GAME_STATUS.ACTIVE.value, GAME_STATUS.HALTED.value]:
+                elif data["state"] in [GAME_STATUS.ACTIVE.value, GAME_STATUS.HALTED.value]:
                     future_page = '/game/process'
+                elif data["state"] in [GAME_STATUS.STOPPED.value]:
+                    future_page = '/game/'
                 socketio.emit('redirect', {"url": future_page})
             elif topic == Topics.CONTOURS:
                 socketio.emit('contours', data)

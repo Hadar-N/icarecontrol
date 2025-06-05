@@ -27,7 +27,7 @@ def speak():
 
 @admin_routes.route('/print_to_terminal', methods=['POST'])
 def print_to_terminal():
-    data = request.json.get('body')
+    data = request.json.get('str')
     data_singleton.logger.info(f'/print_to_terminal: {str(data)}')
     print("print_to_terminal: ", data)
     return json.dumps(asdict(SUCCESS_RES(status=200, success= True)))
@@ -35,7 +35,12 @@ def print_to_terminal():
 @admin_routes.route('/publish_command', methods=['POST'])
 def publish_command():
     command = request.json.get('command')
+    payload = request.json.get('payload')
     conn_manager.publish_message(Topics.CONTROL, {"command": command})
+    if payload and (command == MQTT_COMMANDS.STOP or payload.get("level") or payload.get("mode")):
+        data_singleton.level = payload.get("level", "")
+        data_singleton.mode = payload.get("mode", "")
+        
     # TODO: error handling
     return json.dumps(asdict(SUCCESS_RES(status=200, success= True)))
 

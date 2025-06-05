@@ -3,7 +3,7 @@ from flask import render_template, redirect, url_for, Blueprint, request, after_
 
 from .adminroutes import start_game
 
-from static.consts import WEB_ACTIONS, FE_CONSTS
+from static.consts import FE_CONSTS
 from static.fe_strings import STRINGS
 from utils.forms import GameStartForm
 from utils.curr_data_single import CurrDataSingle
@@ -20,12 +20,13 @@ level_data = STRINGS["gamestart.html"]["level"]
 @game_routes.route('/game/', methods=['GET', 'POST'])
 def game_start():
     form = GameStartForm()
-    stage_1_choice = form.mode.data if form.mode.data in mode_data["options"] else data_singleton.mode
+    if not (form.mode.data and form.mode.data in mode_data["options"]) and data_singleton.mode:
+        form.mode.data = data_singleton.mode
 
     if form.validate_on_submit():
-        start_game(stage_1_choice, form.level.data)
+        start_game(form.mode.data, form.level.data)
     
-    return pack_render_temp('gamestart.html', form=form, stage_1_choice=stage_1_choice)
+    return pack_render_temp('gamestart.html', form=form)
 
 @game_routes.route('/game/process')
 def game_process():
@@ -37,7 +38,7 @@ def game_process():
         print('Invalid game properties. Please select mode and level.')
         return redirect(url_for('game.game_start'))
         
-    return pack_render_temp('gameprocess.html', actions=WEB_ACTIONS)
+    return pack_render_temp('gameprocess.html')
 
 @game_routes.route('/game/end', methods=['GET'])
 def game_end():

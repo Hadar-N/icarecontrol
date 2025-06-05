@@ -17,10 +17,12 @@ class GameStartForm(FlaskForm):
     mode = RadioField(gamestart_strings["mode"]["title"], 
         choices=[(v[0], v[1]) for v in gamestart_strings["mode"]["options"].items()],
         validators=[ValidateMode],
+        default=""
     )
     level = RadioField(gamestart_strings["level"]["title"], 
         choices=[(v[0], v[1]) for v in gamestart_strings["level"]["options"].items()],
         validators=[ValidateLevel],
+        default=""
     )
 
     def getStages(self):

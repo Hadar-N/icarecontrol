@@ -1,4 +1,5 @@
 function printInPythonTerminal(str) {
+    console.log(str)
     fetch('/print_to_terminal', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -6,16 +7,13 @@ function printInPythonTerminal(str) {
     })
 }
 
-function clickControlFunc(command) {
+function clickControlFunc(command, payload= null) {
     fetch('/publish_command', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ command })
+        body: JSON.stringify({ command, payload })
     })
         .then(res => res.json())
-        .then(data => {
-            if (data.redirect) window.location.href = data.redirect;
-        })
 }
 
 function speakWord(str) {

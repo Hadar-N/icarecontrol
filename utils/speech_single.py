@@ -47,10 +47,11 @@ class SpeechSingle:
             totest = word[0]
         return bool(re.search(AUDIO_FILE_DETECTOR, totest))
 
-    def __subprocess_play_file(self, path):
+    def __subprocess_play_file(self, path, gain=-50):
         try:
-            subprocess.run(["mpg123", path],
-                           stdout= subprocess.DEVNULL)
+            subprocess.run(["mpg123", "--gain", str(gain), path],
+                           stdout= subprocess.DEVNULL,
+                           stderr= subprocess.DEVNULL)
         except Exception as e:
             self.__global_Data.logger.error(f'SpeechSingle File {path} play error: {e}')
 

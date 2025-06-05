@@ -53,11 +53,12 @@ class WordTable {
         this.#container.innerHTML = this.#htmlTemplate()
     }
 
-    #onOptionClick(e) {
-        let new_id = Number(e.id.split("-")[1]);
-        if (!this.#current_word.options[new_id].is_attempted) {
+    #onOptionClick(e, elm) {
+        let new_id = Number(elm.id.split("-")[1]);
+        if (!this.#current_word.options[new_id].is_attempted && e.target.alt !== "speaker") {
             GameState.playClickAudio();
             this.#changeCurrChosen(new_id)
+            if(!isEnglishMode()) speakWord(this.#current_word.options[this.#current_chosen].word)
             selectOptions(this.#current_word.word, this.#current_word.options[this.#current_chosen].word)
         }
     }
@@ -67,7 +68,7 @@ class WordTable {
         this.#word_elm = document.getElementById('word-orig');
         this.#options_elm = Array.from(document.getElementsByClassName('option'))
             .sort((a, b) => Number(a.id.split('-')[1]) > Number(b.id.split('-')[1]) ? 1 : -1);
-        this.#options_elm.forEach(elm => elm.addEventListener('click', () => this.#onOptionClick(elm)))
+        this.#options_elm.forEach(elm => elm.addEventListener('click', (e) => this.#onOptionClick(e, elm)))
         this.#initSpeakers()
     }
 
@@ -122,8 +123,11 @@ class WordTable {
         this.#current_word = newword;
         this.#is_active = true;
         this.#time_of_word_new = Date.now()
-        if (isEnglishMode()) speakWord(this.#current_word.word);
         this.#word_elm.children[1].textContent = newword.word;
+        if (isEnglishMode()) {
+            speakWord(this.#current_word.word);
+            if (isSpellingMode()) this.#word_elm.children[1].textContent = ""
+        }
         this.#table_elm.style.opacity = 1
     }
 
@@ -189,7 +193,7 @@ class WordTable {
                 this.#matchedWord()
                 break;
             default:
-                printInPythonTerminal('RenderByStage unsupported stage:', stage)
+                printInPythonTerminal('RenderByStage unsupported stage:'+ stage)
         }
     }
 }

@@ -11,7 +11,8 @@ STRINGS = {
             "err_msg": "Please select a game mode",
             "options": {
                 "ENtoZH": '英文單字',
-                "ZHtoEN": '中文單字'
+                "ZHtoEN": '中文單字',
+                "ENtoSpelling": '英文拼寫'
             }
         },
         "level": {

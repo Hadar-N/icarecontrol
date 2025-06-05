@@ -45,7 +45,7 @@
 
         return_btn = document.getElementById('returnbtn')
         form_elm = document.getElementById('formelm')
-        curr_stage = "{{stage_1_choice}}" ? 2 : 0;
+        curr_stage = "{{form.mode.data}}" ? 2 : 0;
 
         apply_stage_styles = (next_i) => {
             if (next_i == curr_stage) {

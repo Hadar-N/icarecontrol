@@ -3,20 +3,14 @@
 
 <div class="fulldisplay centered center-top">
 
+    <div id="for-ctrl-btns"></div>
+    
     <div id="for-table"></div>
 
     <div id="for-instructions"></div>
 
 </div>
 
-<div class="ctrl-buttons">
-    {% for btn in ["home","return"] %}
-    <input type="radio" name="ctrl-buttons" id="{{btn}}" value="{{btn}}" />
-    <label for="{{btn}}" class="ctrl-singlebutton" id="{{btn}}" onclick="onClickControl(this)">
-        <img class="ctrl-img" src="/static/icons/{{btn}}.svg" alt="{{btn}}" />
-    </label>
-    {% endfor %}
-</div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -26,21 +20,14 @@
         for_instructions_elm = document.getElementById('for-instructions');
         instructions_line = new InstructionsLine(for_instructions_elm);
 
+        ctrl_btns_elm = document.getElementById('for-ctrl-btns');
+        ctrl_btns = new ControlBtns(ctrl_btns_elm);
+
         strings = GameState.getStrings()["gameprocess.html"]
         data_actions = GameState.getConsts().MQTT_DATA_ACTIONS
         flow_stages = GameState.getConsts().FLOW_STAGES
         data_actions_to_flow_stage = GameState.getConsts().MQTT_DATA_ACTION_TO_FLOW_STAGE
         active_contours = 0;
-
-        onClickControl = (obj) => {
-            GameState.playClickAudio();
-            clickControlFunc("stop");
-            GameState.setCurrLevel(0)
-            if (obj.getAttribute("id") == "home") {
-                GameState.setCurrMode(0)
-            }
-            window.location.href = '/game/';
-        }
 
         applyStage = (stage, word = null) => {
             word_table.RenderByStage(stage, word)
@@ -51,7 +38,7 @@
             socket.on('word', data => {
                 future_flowstage = data_actions_to_flow_stage[data.type]
                 if (Number.isInteger(future_flowstage)) applyStage(future_flowstage, data.word)
-                else if (data.type == data_actions.SELECT_FAIL) speakWord(strings.instructions.dig_2)
+                else if (data.type == data_actions.SELECT_FAIL) instructions_line.playRecording(flow_stages.NEW_EN_WORD)
                 else printInPythonTerminal('action type unaccepted:' + data.type)
             });
             socket.on("contours", data => {

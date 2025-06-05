@@ -1,6 +1,9 @@
 function isEnglishMode() {
     return GameState.getCurrModeStr() && !!GameState.getCurrModeStr().match(/英文/)
 }
+function isSpellingMode() {
+    return GameState.getCurrModeStr() && !!GameState.getCurrModeStr().match(/拼寫/)
+}
 
 function createSpeakerButton(str, add_onclick = true) {
     const svg = document.createElement('img');

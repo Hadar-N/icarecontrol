@@ -3,6 +3,8 @@
 
 <div class="fulldisplay centered">
 
+    <div id="for-ctrl-btns"></div>
+
     <div class="listed">
         <ul id="message-list" class="message-list">
             {% for m in matched %}
@@ -15,18 +17,22 @@
         <button id="submit" onclick="clickReturnFunc(this)" class="submit"></button>
     </div>
 </div>
+
+
 <script>
-
-    function clickReturnFunc(elm) {
-        GameState.playClickAudio();
-        startGame(GameState.getCurrModeStr(true), GameState.getCurrLevelStr(true))
-    }
-
     document.addEventListener('DOMContentLoaded', function () {
         strings = GameState.getStrings()["gameend.html"]
         new Audio('/static/audio/win.mp3').play()
         
         document.getElementById("submit").textContent = strings.submit_btn
+
+        ctrl_btns_elm = document.getElementById('for-ctrl-btns');
+        ctrl_btns = new ControlBtns(ctrl_btns_elm);
+
+        clickReturnFunc = (elm) => {
+            GameState.playClickAudio();
+            startGame(GameState.getCurrModeStr(true), GameState.getCurrLevelStr(true))
+        }
 
         const scrollable_list = document.getElementsByClassName('listed')[0];
         supportListScrolling(scrollable_list)
@@ -38,7 +44,8 @@
             speaker_btn = createSpeakerButton(item.id.slice(2))
             isEnglishMode() ? item.prepend(speaker_btn) : item.append(speaker_btn);
         });
-        chinese_items.forEach(item => item.classList.add("meaning"))
+        if (isSpellingMode()) chinese_items.forEach(item => item.textContent="")
+        else chinese_items.forEach(item => item.classList.add("meaning"))
     })
 
 </script>
